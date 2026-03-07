@@ -2,6 +2,7 @@ import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section, PageHeader, FadeIn } from '../components/ui';
 import { Shirt, Monitor, Droplets, Heart, Zap, Footprints } from 'lucide-react';
+import { ProjectCard } from '../components/shared/ProjectCard';
 
 export default function Projects() {
   return (
@@ -14,132 +15,52 @@ export default function Projects() {
 
       {/* Basic Living Support Program */}
       <Section bg="white">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <FadeIn className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl group">
-            <img 
-              src="https://brkfoundation.org/theme/brk/img/projects01.jpg" 
-              alt="Basic Living Support" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
-          </FadeIn>
-          
-          <FadeIn delay={0.2}>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                <Shirt size={24} />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-display font-black text-dark uppercase tracking-tight">
-                Basic Living Support Program
-              </h2>
-            </div>
-            
-            <p className="text-lg text-gray-600 font-medium leading-relaxed mb-8">
-              We provide basic living support and love to families and children struggling in poverty.
-              We support basic living necessities such as clothing, shoes, and fans for people in need.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-center hover:shadow-lg transition-shadow">
-                <div className="text-primary mb-2 flex justify-center"><Shirt size={28} /></div>
-                <div className="text-3xl font-black text-dark mb-1">18,600</div>
-                <div className="text-sm font-bold text-gray-500 uppercase tracking-wider">Clothes (PCS)</div>
-              </div>
-              
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-center hover:shadow-lg transition-shadow">
-                <div className="text-primary mb-2 flex justify-center"><Footprints size={28} /></div>
-                <div className="text-3xl font-black text-dark mb-1">38,400</div>
-                <div className="text-sm font-bold text-gray-500 uppercase tracking-wider">Shoes (Pairs)</div>
-              </div>
-
-              <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-center hover:shadow-lg transition-shadow">
-                <div className="text-primary mb-2 flex justify-center"><Zap size={28} /></div>
-                <div className="text-3xl font-black text-dark mb-1">100</div>
-                <div className="text-sm font-bold text-gray-500 uppercase tracking-wider">Electric Fan (Unit)</div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
+        <ProjectCard
+          title="Basic Living Support Program"
+          description="We provide basic living support and love to families and children struggling in poverty. We support basic living necessities such as clothing, shoes, and fans for people in need."
+          image="https://brkfoundation.org/theme/brk/img/projects01.jpg"
+          icon={<Shirt size={24} />}
+          stats={[
+            { icon: Shirt, value: "18,600", label: "Clothes (PCS)" },
+            { icon: Footprints, value: "38,400", label: "Shoes (Pairs)" },
+            { icon: Zap, value: "100", label: "Electric Fan (Unit)" }
+          ]}
+        />
       </Section>
 
       {/* Education Support Program */}
       <Section bg="secondary">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <FadeIn delay={0.2} className="order-2 lg:order-1">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                <Monitor size={24} />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-display font-black text-dark uppercase tracking-tight">
-                Education Support Program
-              </h2>
-            </div>
-            
-            <p className="text-lg text-gray-600 font-medium leading-relaxed mb-8">
-              We help vulnerable individuals achieve their dreams and become global citizens by providing quality education.
-              We also provide computer support and educational facilities for communities with poor working conditions.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="bg-gray-50 p-8 rounded-2xl border border-gray-100 text-center hover:shadow-lg transition-shadow">
-                <div className="text-primary mb-3 flex justify-center"><Monitor size={32} /></div>
-                <div className="text-4xl font-black text-dark mb-2">110</div>
-                <div className="text-sm font-bold text-gray-500 uppercase tracking-wider">Computer (Unit)</div>
-              </div>
-            </div>
-          </FadeIn>
-
-          <FadeIn className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl group order-1 lg:order-2">
-            <img 
-              src="https://brkfoundation.org/theme/brk/img/projects02.jpg" 
-              alt="Education Support" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
-          </FadeIn>
-        </div>
+        <ProjectCard
+          title="Education Support Program"
+          description="We help vulnerable individuals achieve their dreams and become global citizens by providing quality education. We also provide computer support and educational facilities for communities with poor working conditions."
+          image="https://brkfoundation.org/theme/brk/img/projects02.jpg"
+          icon={<Monitor size={24} />}
+          stats={[
+            { icon: Monitor, value: "110", label: "Computer (Unit)" }
+          ]}
+          statsCols={2}
+          reverse={true}
+        />
       </Section>
 
       {/* Community Development Support */}
       <Section bg="white">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <FadeIn className="relative h-[500px] rounded-3xl overflow-hidden shadow-2xl group">
-            <img 
-              src="https://brkfoundation.org/theme/brk/img/projects03.jpg" 
-              alt="Community Development" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
-          </FadeIn>
-          
-          <FadeIn delay={0.2}>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                <Droplets size={24} />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-display font-black text-dark uppercase tracking-tight">
-                Community Development Support
-              </h2>
-            </div>
-            
-            <p className="text-lg text-gray-600 font-medium leading-relaxed mb-6">
-              We create a safe environment with clean water for vulnerable children and residents.
+        <ProjectCard
+          title="Community Development Support"
+          description="We create a safe environment with clean water for vulnerable children and residents."
+          image="https://brkfoundation.org/theme/brk/img/projects03.jpg"
+          icon={<Droplets size={24} />}
+        >
+          <div className="bg-blue-50 p-6 rounded-2xl border-l-4 border-blue-500 mb-6">
+            <p className="text-blue-900 font-medium italic">
+              "An alarming 748 million people lack access to safe drinking water."
             </p>
-            
-            <div className="bg-blue-50 p-6 rounded-2xl border-l-4 border-blue-500 mb-6">
-              <p className="text-blue-900 font-medium italic">
-                "An alarming 748 million people lack access to safe drinking water."
-              </p>
-            </div>
+          </div>
 
-            <p className="text-lg text-gray-600 font-medium leading-relaxed">
-              Through our well-digging initiatives, we provide clean water to benefit children and communities, protecting them from infectious diseases and creating a safe and healthy environment.
-            </p>
-          </FadeIn>
-        </div>
+          <p className="text-lg text-gray-600 font-medium leading-relaxed">
+            Through our well-digging initiatives, we provide clean water to benefit children and communities, protecting them from infectious diseases and creating a safe and healthy environment.
+          </p>
+        </ProjectCard>
       </Section>
 
       {/* Future Initiatives */}
@@ -193,3 +114,4 @@ export default function Projects() {
     </MainLayout>
   );
 }
+

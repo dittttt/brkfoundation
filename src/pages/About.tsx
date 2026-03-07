@@ -1,7 +1,8 @@
 import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section, PageHeader, FadeIn } from '../components/ui';
-import { Quote, Eye, Target, Heart, ShieldCheck, Users, ArrowRight } from 'lucide-react';
+import { Eye, Target, Heart, ShieldCheck, Users } from 'lucide-react';
+import { ProfileCard } from '../components/shared/ProfileCard';
 
 export default function About() {
   return (
@@ -46,42 +47,22 @@ export default function About() {
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
             
             {/* Bruce Kim Profile */}
-            <FadeIn delay={0.2} className="relative group">
-              <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-transform duration-500 hover:-translate-y-2 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10 text-primary">
-                  <Quote size={64} />
-                </div>
-                <div className="flex items-center gap-6 relative z-10">
-                  <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg border-2 border-white ring-2 ring-gray-100">
-                    <img src="https://brkfoundation.org/theme/brk/img/Bruce-Kim.jpg" alt="Bruce Kim" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-display font-bold text-dark">Bruce Kim</h3>
-                    <p className="text-primary font-bold text-sm uppercase tracking-widest mb-2">Chairman</p>
-                    <p className="text-gray-500 italic text-sm">"People are the most crucial aspect of our lives."</p>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
+            <ProfileCard 
+              name="Bruce Kim"
+              role="Chairman"
+              quote="People are the most crucial aspect of our lives."
+              image="https://brkfoundation.org/theme/brk/img/Bruce-Kim.jpg"
+              delay={0.2}
+            />
 
             {/* Liz Moon Profile */}
-            <FadeIn delay={0.4} className="relative group">
-              <div className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 transition-transform duration-500 hover:-translate-y-2 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10 text-primary">
-                  <Quote size={64} />
-                </div>
-                <div className="flex items-center gap-6 relative z-10">
-                  <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg border-2 border-white ring-2 ring-gray-100">
-                    <img src="https://brkfoundation.org/theme/brk/img/Liz-Moon.jpg" alt="Liz Moon" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-display font-bold text-dark">Liz Moon</h3>
-                    <p className="text-primary font-bold text-sm uppercase tracking-widest mb-2">Director of Operation</p>
-                    <p className="text-gray-500 italic text-sm">"Love and sharing can change the world."</p>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
+            <ProfileCard 
+              name="Liz Moon"
+              role="Director of Operation"
+              quote="Love and sharing can change the world."
+              image="https://brkfoundation.org/theme/brk/img/Liz-Moon.jpg"
+              delay={0.4}
+            />
           </div>
         </div>
       </section>
@@ -184,3 +165,4 @@ export default function About() {
     </MainLayout>
   );
 }
+

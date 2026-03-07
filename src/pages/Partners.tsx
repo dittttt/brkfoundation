@@ -1,6 +1,7 @@
 import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section, PageHeader, FadeIn } from '../components/ui';
+import { PartnerCard } from '../components/shared/PartnerCard';
 
 export default function Partners() {
   return (
@@ -19,17 +20,12 @@ export default function Partners() {
               { name: "Tatay Pho Vietnamese Rice Noodles", image: "https://brkfoundation.org/theme/brk/img/partner01.png" },
               { name: "Cpass Inc.", image: "https://brkfoundation.org/theme/brk/img/partner02.png" }
             ].map((partner, idx) => (
-              <FadeIn key={idx} delay={idx * 0.1} className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col items-center text-center border border-gray-100">
-                <div className="h-32 w-full flex items-center justify-center mb-6 bg-gray-50 rounded-2xl p-4 group-hover:bg-primary/5 transition-colors">
-                  <img 
-                    src={partner.image} 
-                    alt={partner.name} 
-                    className="max-h-full w-auto object-contain transition-all duration-500 transform group-hover:scale-110" 
-                    referrerPolicy="no-referrer" 
-                  />
-                </div>
-                <h3 className="text-2xl font-display font-bold text-dark">{partner.name}</h3>
-              </FadeIn>
+              <PartnerCard 
+                key={idx}
+                name={partner.name}
+                image={partner.image}
+                delay={idx * 0.1}
+              />
             ))}
           </div>
         </div>

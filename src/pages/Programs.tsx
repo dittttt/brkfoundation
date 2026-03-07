@@ -1,9 +1,7 @@
 import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
-import { Section, PageHeader, FadeIn } from '../components/ui';
-import { Counter } from '../components/ui/Counter';
+import { Section, PageHeader, FadeIn, Counter, ActivitySlider } from '../components/ui';
 import { Heart } from 'lucide-react';
-import { ActivitySlider } from '../components/ui/ActivitySlider';
 
 export default function Programs() {
   const FEEDING_ACTIVITIES = Array.from({ length: 10 }, (_, i) => ({

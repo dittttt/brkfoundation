@@ -2,6 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 
+export * from './ActivitySlider';
+export * from './Carousel';
+export * from './Counter';
+
 export const Section = ({ 
   children, 
   className, 
@@ -80,3 +84,47 @@ export const PageHeader = ({ title, subtitle, image }: { title: string; subtitle
     </div>
   );
 };
+
+export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(({ className, ...props }, ref) => {
+  return (
+    <input
+      ref={ref}
+      className={clsx(
+        "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-colors",
+        className
+      )}
+      {...props}
+    />
+  );
+});
+Input.displayName = "Input";
+
+export const TextArea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(({ className, ...props }, ref) => {
+  return (
+    <textarea
+      ref={ref}
+      className={clsx(
+        "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none resize-none transition-colors",
+        className
+      )}
+      {...props}
+    />
+  );
+});
+TextArea.displayName = "TextArea";
+
+export const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, children, ...props }, ref) => {
+  return (
+    <button
+      ref={ref}
+      className={clsx(
+        "w-full bg-primary text-white font-medium py-4 rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+});
+Button.displayName = "Button";

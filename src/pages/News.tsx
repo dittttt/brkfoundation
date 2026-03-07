@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section, PageHeader, FadeIn } from '../components/ui';
 import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { NewsCard } from '../components/shared/NewsCard';
+import { GalleryCard } from '../components/shared/GalleryCard';
 
 export default function News() {
   const [activeYear, setActiveYear] = useState('All');
@@ -100,32 +102,7 @@ export default function News() {
 
         <div className="grid md:grid-cols-3 gap-10">
           {newsItems.map((item, idx) => (
-            <FadeIn key={idx} delay={idx * 0.1}>
-              <div className="group cursor-pointer bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full flex flex-col">
-                <div className="relative overflow-hidden aspect-[16/10]">
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-dark px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wide shadow-sm">
-                    News
-                  </div>
-                </div>
-                <div className="p-8 flex flex-col flex-grow">
-                  <div className="text-primary text-sm font-bold mb-3 uppercase tracking-wide">{item.date}</div>
-                  <h3 className="text-2xl font-display font-black text-dark group-hover:text-primary transition-colors leading-tight mb-4">{item.title}</h3>
-                  <p className="text-gray-600 font-medium leading-relaxed mb-6 flex-grow">{item.desc}</p>
-                  <div className="flex items-center text-primary font-bold text-sm uppercase tracking-wider group/link">
-                    Read More 
-                    <svg className="w-4 h-4 ml-2 transform group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
+            <NewsCard key={idx} item={item} delay={idx * 0.1} />
           ))}
         </div>
       </Section>
@@ -177,31 +154,7 @@ export default function News() {
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
           {galleryItems.map((item, idx) => (
-            <FadeIn key={idx} delay={idx * 0.05} className="group cursor-pointer">
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-                <div className="relative overflow-hidden aspect-[4/3]">
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="bg-white/20 backdrop-blur-md p-3 rounded-full text-white">
-                      <Search size={20} />
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 flex flex-col flex-grow">
-                  <h4 className="font-bold text-dark text-sm leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                    {item.title}
-                  </h4>
-                  <div className="mt-auto pt-2 border-t border-gray-100 text-xs text-gray-500 font-mono">
-                    {item.date}
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
+            <GalleryCard key={idx} item={item} delay={idx * 0.05} />
           ))}
         </div>
 
@@ -241,3 +194,4 @@ export default function News() {
     </MainLayout>
   );
 }
+
