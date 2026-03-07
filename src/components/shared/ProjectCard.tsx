@@ -57,14 +57,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
         {stats && (
           <div
-            className="grid gap-6"
+            className="grid gap-4 md:gap-6"
             style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
           >
             {stats.map((stat, idx) => (
-              <div key={idx} className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-center hover:shadow-lg transition-shadow">
-                <div className="text-primary mb-2 flex justify-center"><stat.icon size={28} /></div>
-                <div className="text-3xl font-black text-dark mb-1">{stat.value}</div>
-                <div className="text-sm font-bold text-gray-500 uppercase tracking-wider">{stat.label}</div>
+              <div key={idx} className="bg-gray-50 p-2 md:p-6 rounded-xl md:rounded-2xl border border-gray-100 text-center hover:shadow-lg transition-shadow flex flex-col justify-center items-center">
+                <div className="text-primary mb-1 md:mb-2 flex justify-center"><stat.icon size={24} className="md:w-7 md:h-7" /></div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-black text-dark mb-1">{stat.value}</div>
+                <div className="text-[10px] sm:text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider leading-tight">{stat.label}</div>
               </div>
             ))}
           </div>

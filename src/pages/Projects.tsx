@@ -21,9 +21,9 @@ export default function Projects() {
           image="https://brkfoundation.org/theme/brk/img/projects01.jpg"
           icon={<Shirt size={24} />}
           stats={[
-            { icon: Shirt, value: "18,600", label: "Clothes (PCS)" },
-            { icon: Footprints, value: "38,400", label: "Shoes (Pairs)" },
-            { icon: Zap, value: "100", label: "Electric Fan (Unit)" }
+            { icon: Shirt, value: "18.6K", label: "Clothes" },
+            { icon: Footprints, value: "38.4K", label: "Shoes" },
+            { icon: Zap, value: "100", label: "Elec. Fans" }
           ]}
         />
       </Section>
