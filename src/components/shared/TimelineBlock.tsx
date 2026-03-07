@@ -20,7 +20,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ year, image, title
     <div className={`relative flex flex-col md:flex-row items-center gap-6 md:gap-0 ${isEven ? 'md:flex-row-reverse' : ''}`}>
       
       {/* Timeline Dot (Desktop & Mobile) */}
-      <div className="absolute left-1/2 md:top-1/2 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-md z-20 transform -translate-x-1/2 md:-translate-y-1/2 -top-10 md:top-auto" />
+      <div className="absolute left-1/2 -top-12 md:top-1/2 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-md z-20 transform -translate-x-1/2 -translate-y-1/2" />
 
       {/* Content Side */}
       <div className={`w-full md:w-1/2 px-4 md:px-0 z-10 ${isEven ? 'md:pl-16' : 'md:pr-16'}`}>

@@ -92,7 +92,7 @@ export default function Story() {
             {/* Timeline */}
             <div className="relative">
                 {/* Central Line (Desktop & Mobile) */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent -translate-x-1/2" />
+                <div className="absolute left-1/2 -top-16 bottom-0 w-px bg-gradient-to-b from-gray-200 via-gray-300 to-transparent -translate-x-1/2" />
 
                 <div className="space-y-24 md:space-y-24 mt-10">
                     {timelineBlocks.map((block, idx) => (
