@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FadeIn } from '../ui';
 
 interface NewsItem {
@@ -16,7 +17,7 @@ export interface NewsCardProps {
 export const NewsCard: React.FC<NewsCardProps> = ({ item, delay = 0 }) => {
   return (
     <FadeIn delay={delay}>
-      <div className="group cursor-pointer bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full flex flex-col">
+      <Link to="/demoboard" className="group cursor-pointer bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full flex flex-col">
         <div className="relative overflow-hidden aspect-[16/10]">
           <img 
             src={item.image} 
@@ -39,7 +40,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ item, delay = 0 }) => {
             </svg>
           </div>
         </div>
-      </div>
+      </Link>
     </FadeIn>
   );
 };

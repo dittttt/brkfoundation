@@ -38,7 +38,6 @@ export default function Projects() {
           stats={[
             { icon: Monitor, value: "110", label: "Computer (Unit)" }
           ]}
-          statsCols={2}
           reverse={true}
         />
       </Section>

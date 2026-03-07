@@ -14,7 +14,6 @@ export interface ProjectCardProps {
   image: string;
   icon: React.ReactNode;
   stats?: StatItem[];
-  statsCols?: number;
   reverse?: boolean;
   children?: React.ReactNode;
 }
@@ -25,7 +24,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   image, 
   icon, 
   stats, 
-  statsCols = 3,
   reverse = false,
   children 
 }) => {
@@ -58,7 +56,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {children}
 
         {stats && (
-          <div className={`grid grid-cols-1 sm:grid-cols-${statsCols} gap-6`}>
+          <div
+            className="grid gap-6"
+            style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
+          >
             {stats.map((stat, idx) => (
               <div key={idx} className="bg-gray-50 p-6 rounded-2xl border border-gray-100 text-center hover:shadow-lg transition-shadow">
                 <div className="text-primary mb-2 flex justify-center"><stat.icon size={28} /></div>

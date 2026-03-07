@@ -10,6 +10,7 @@ import Partners from './pages/Partners';
 import Donate from './pages/Donate';
 import Contact from './pages/Contact';
 import News from './pages/News';
+import PostDetail from './pages/PostDetail';
 
 export default function App() {
   return (
@@ -23,9 +24,10 @@ export default function App() {
         <Route path="/programs" element={<Programs />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/partners" element={<Partners />} />
-        <Route path="/news" element={<News />} />
+        <Route path="/updates" element={<News />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/donate" element={<Donate />} />
+        <Route path="/demoboard" element={<PostDetail />} />
       </Routes>
     </Router>
   );

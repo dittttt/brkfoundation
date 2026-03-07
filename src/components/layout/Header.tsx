@@ -115,109 +115,130 @@ const Dropdown = ({ title, items, mobile = false, onClose }: { title: string, it
 export const Header = () => {
   const [isOpen, setIsOpen] = React.useState(false);
 
+  // Lock body scroll when mobile menu is open
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      // Stop Lenis smooth scroll when menu is open
+      const lenisInstance = (window as any).__lenis;
+      if (lenisInstance) lenisInstance.stop();
+    } else {
+      document.body.style.overflow = '';
+      const lenisInstance = (window as any).__lenis;
+      if (lenisInstance) lenisInstance.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 z-50 group">
-          <img 
-            src="https://brkfoundation.org/theme/brk/img/top_logo.png" 
-            alt="BRK Foundation" 
-            className="h-16 w-auto object-contain"
-            referrerPolicy="no-referrer"
-          />
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 h-full">
-          <NavLink to="/">Home</NavLink>
-          
-          <Dropdown 
-            title="About Us" 
-            items={[
-              { label: "About Us", to: "/about" },
-              { label: "Our Story", to: "/story" }
-            ]} 
-          />
-          
-          <Dropdown 
-            title="What We Do" 
-            items={[
-              { label: "Feeding Program", to: "/programs" },
-              { label: "Projects", to: "/projects" },
-              { label: "Partners", to: "/partners" }
-            ]} 
-          />
-
-          <NavLink to="/news">Updates</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
-          
-          <Link 
-            to="/donate" 
-            className="bg-primary text-white px-6 py-2 rounded-md font-bold uppercase tracking-wide hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm"
-          >
-            <Heart size={16} fill="currentColor" />
-            <span>Donate</span>
+    <>
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm relative">
+        <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 z-50 group">
+            <img 
+              src="https://brkfoundation.org/theme/brk/img/top_logo.png" 
+              alt="BRK Foundation" 
+              className="h-16 w-auto object-contain"
+              referrerPolicy="no-referrer"
+            />
           </Link>
-        </nav>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="md:hidden z-50 p-2 text-dark"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X /> : <Menu />}
-        </button>
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8 h-full">
+            <NavLink to="/">Home</NavLink>
+            
+            <Dropdown 
+              title="About Us" 
+              items={[
+                { label: "About Us", to: "/about" },
+                { label: "Our Story", to: "/story" }
+              ]} 
+            />
+            
+            <Dropdown 
+              title="What We Do" 
+              items={[
+                { label: "Feeding Program", to: "/programs" },
+                { label: "Projects", to: "/projects" },
+                { label: "Partners", to: "/partners" }
+              ]} 
+            />
 
-        {/* Mobile Nav */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, x: "100%" }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-0 bg-white z-40 flex flex-col pt-24 px-6 md:hidden overflow-y-auto"
+            <NavLink to="/updates">Updates</NavLink>
+            <NavLink to="/contact">Contact</NavLink>
+            
+            <Link 
+              to="/donate" 
+              className="bg-primary text-white px-6 py-2 rounded-md font-bold uppercase tracking-wide hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm"
             >
-              <div className="flex flex-col gap-4">
-                <NavLink to="/" mobile onClick={() => setIsOpen(false)}>Home</NavLink>
-                
-                <Dropdown 
-                  title="About Us" 
-                  mobile 
-                  onClose={() => setIsOpen(false)}
-                  items={[
-                    { label: "About Us", to: "/about" },
-                    { label: "Our Story", to: "/story" }
-                  ]} 
-                />
-                
-                <Dropdown 
-                  title="What We Do" 
-                  mobile 
-                  onClose={() => setIsOpen(false)}
-                  items={[
-                    { label: "Feeding Program", to: "/programs" },
-                    { label: "Projects", to: "/projects" },
-                    { label: "Partners", to: "/partners" }
-                  ]} 
-                />
+              <Heart size={16} fill="currentColor" />
+              <span>Donate</span>
+            </Link>
+          </nav>
 
-                <NavLink to="/news" mobile onClick={() => setIsOpen(false)}>Updates</NavLink>
-                <NavLink to="/contact" mobile onClick={() => setIsOpen(false)}>Contact</NavLink>
-                
-                <Link 
-                  to="/donate" 
-                  onClick={() => setIsOpen(false)}
-                  className="mt-6 bg-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-md uppercase tracking-wide"
-                >
-                  <Heart size={20} fill="currentColor" />
-                  <span>Donate Now</span>
-                </Link>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </header>
+          {/* Mobile Toggle */}
+          <button
+            className="md:hidden z-[60] p-2 text-dark flex items-center justify-center w-12 h-12 relative"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+          >
+            {isOpen ? <X size={28} strokeWidth={2.5} /> : <Menu size={28} strokeWidth={2.5} />}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Nav */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 bg-white z-[45] flex flex-col pt-28 px-6 md:hidden overflow-y-auto"
+          >
+            <div className="flex flex-col gap-4">
+              <NavLink to="/" mobile onClick={() => setIsOpen(false)}>Home</NavLink>
+              
+              <Dropdown 
+                title="About Us" 
+                mobile 
+                onClose={() => setIsOpen(false)}
+                items={[
+                  { label: "About Us", to: "/about" },
+                  { label: "Our Story", to: "/story" }
+                ]} 
+              />
+              
+              <Dropdown 
+                title="What We Do" 
+                mobile 
+                onClose={() => setIsOpen(false)}
+                items={[
+                  { label: "Feeding Program", to: "/programs" },
+                  { label: "Projects", to: "/projects" },
+                  { label: "Partners", to: "/partners" }
+                ]} 
+              />
+
+              <NavLink to="/updates" mobile onClick={() => setIsOpen(false)}>Updates</NavLink>
+              <NavLink to="/contact" mobile onClick={() => setIsOpen(false)}>Contact</NavLink>
+              
+              <Link 
+                to="/donate" 
+                onClick={() => setIsOpen(false)}
+                className="mt-6 bg-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-md uppercase tracking-wide"
+              >
+                <Heart size={20} fill="currentColor" />
+                <span>Donate Now</span>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
