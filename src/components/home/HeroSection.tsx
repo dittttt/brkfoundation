@@ -13,7 +13,7 @@ const HERO_SLIDES = [
 
 export const HeroSection = () => {
   return (
-    <div className="relative h-screen flex items-center justify-center overflow-hidden bg-gray-900">
+    <div className="relative h-[calc(100vh-6rem)] min-h-[600px] flex items-center justify-center overflow-hidden bg-gray-900">
       {/* Background Carousel */}
       <div className="absolute inset-0 z-0">
         <Carousel 
