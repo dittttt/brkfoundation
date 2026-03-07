@@ -21,24 +21,33 @@ export const Carousel = ({
   showArrows = true,
   showIndicators = true
 }: CarouselProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [[page, direction], setPage] = useState([0, 0]);
+
+  // Derive current slide index robustly (handles negative numbers)
+  const currentIndex = ((page % slides.length) + slides.length) % slides.length;
 
   const nextSlide = useCallback(() => {
-    setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
+    setPage([page + 1, 1]);
+  }, [page]);
 
   const prevSlide = useCallback(() => {
-    setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
+    setPage([page - 1, -1]);
+  }, [page]);
 
   useEffect(() => {
     if (!autoPlayInterval) return;
     const timer = setInterval(nextSlide, autoPlayInterval);
     return () => clearInterval(timer);
-  }, [autoPlayInterval, nextSlide, currentIndex]);
+  }, [autoPlayInterval, nextSlide]);
+
+  const handleIndicatorClick = (idx: number) => {
+    const diff = idx - currentIndex;
+    if (diff === 0) return;
+    
+    // Instead of simply jumping, we increment/decrement the page by the difference
+    // to ensure the index aligns and we get a completely fresh key from Framer Motion.
+    setPage([page + diff, diff > 0 ? 1 : -1]);
+  };
 
   const variants = {
     enter: (direction: number) => ({
@@ -58,7 +67,7 @@ export const Carousel = ({
     <div className={clsx("relative overflow-hidden group", className)}>
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
-          key={currentIndex}
+          key={page}
           custom={direction}
           variants={variants}
           initial="enter"
@@ -107,10 +116,7 @@ export const Carousel = ({
           {slides.map((_, idx) => (
             <button
               key={idx}
-              onClick={() => {
-                setDirection(idx > currentIndex ? 1 : -1);
-                setCurrentIndex(idx);
-              }}
+              onClick={() => handleIndicatorClick(idx)}
               className={clsx(
                 "h-1.5 transition-all duration-300 rounded-full",
                 idx === currentIndex ? "bg-white w-12" : "bg-white/30 w-8 hover:bg-white/50"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { FadeIn } from '../ui';
 import { Carousel } from '../ui/Carousel';
 
@@ -47,7 +47,6 @@ export const HeroSection = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/donate" className="bg-primary text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-primary/90 transition-colors shadow-lg w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-wide">
-              <Heart size={20} fill="currentColor" />
               Donate Now
             </Link>
             <Link to="/about" className="bg-white text-dark px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg w-full sm:w-auto flex items-center justify-center gap-2 uppercase tracking-wide">

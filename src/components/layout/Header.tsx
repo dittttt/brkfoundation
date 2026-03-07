@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Heart, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
@@ -14,7 +14,7 @@ const NavLink = ({ to, children, mobile = false, onClick }: { to: string; childr
       onClick={onClick}
       className={clsx(
         "relative transition-colors duration-200",
-        mobile ? "block text-lg py-2 font-medium" : "text-sm font-bold uppercase tracking-wide hover:text-primary",
+        mobile ? "block text-xl py-2 font-medium" : "text-base font-bold uppercase tracking-wide hover:text-primary",
         isActive ? "text-primary" : "text-dark"
       )}
     >
@@ -32,10 +32,10 @@ const Dropdown = ({ title, items, mobile = false, onClose }: { title: string, it
       <div className="w-full">
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between w-full text-lg py-2 font-medium text-dark"
+          className="flex items-center justify-between w-full text-xl py-2 font-medium text-dark"
         >
           {title}
-          <ChevronDown size={16} className={clsx("transition-transform", isOpen && "rotate-180")} />
+          <ChevronDown size={20} className={clsx("transition-transform", isOpen && "rotate-180")} />
         </button>
         <AnimatePresence>
           {isOpen && (
@@ -51,7 +51,7 @@ const Dropdown = ({ title, items, mobile = false, onClose }: { title: string, it
                   to={item.to}
                   onClick={onClose}
                   className={clsx(
-                    "block py-2 text-base text-gray-600 hover:text-primary",
+                    "block py-2.5 text-lg text-gray-600 hover:text-primary",
                     location.pathname === item.to && "text-primary font-medium"
                   )}
                 >
@@ -73,12 +73,12 @@ const Dropdown = ({ title, items, mobile = false, onClose }: { title: string, it
     >
       <button 
         className={clsx(
-          "flex items-center gap-1 text-sm font-bold uppercase tracking-wide transition-colors py-2",
+          "flex items-center gap-1 text-base font-bold uppercase tracking-wide transition-colors py-2",
           isOpen ? "text-primary" : "text-dark hover:text-primary"
         )}
       >
         {title}
-        <ChevronDown size={14} className={clsx("transition-transform duration-200", isOpen && "rotate-180")} />
+        <ChevronDown size={16} className={clsx("transition-transform duration-200", isOpen && "rotate-180")} />
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -87,7 +87,7 @@ const Dropdown = ({ title, items, mobile = false, onClose }: { title: string, it
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-0 pt-2 w-56 z-50 origin-top-left"
+            className="absolute top-full left-0 pt-2 w-60 z-50 origin-top-left"
           >
             <div className="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2">
               {items.map((item, idx) => (
@@ -95,7 +95,7 @@ const Dropdown = ({ title, items, mobile = false, onClose }: { title: string, it
                   key={idx}
                   to={item.to}
                   className={clsx(
-                    "block px-6 py-3 text-sm font-bold uppercase tracking-wide transition-all hover:pl-8",
+                    "block px-6 py-3.5 text-base font-bold uppercase tracking-wide transition-all hover:pl-8",
                     location.pathname === item.to 
                       ? "text-primary bg-primary/5 border-l-4 border-primary" 
                       : "text-gray-500 hover:text-primary hover:bg-gray-50 border-l-4 border-transparent"
@@ -136,17 +136,17 @@ export const Header = () => {
     <>
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm relative">
         <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 z-50 group">
+          <Link to="/" className="flex items-center gap-3 z-50 group py-2 h-full">
             <img 
               src="https://brkfoundation.org/theme/brk/img/top_logo.png" 
               alt="BRK Foundation" 
-              className="h-16 w-auto object-contain"
+              className="h-full w-auto object-contain max-h-[4.5rem]"
               referrerPolicy="no-referrer"
             />
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8 h-full">
+          <nav className="hidden md:flex items-center gap-10 h-full">
             <NavLink to="/">Home</NavLink>
             
             <Dropdown 
@@ -171,9 +171,8 @@ export const Header = () => {
             
             <Link 
               to="/donate" 
-              className="bg-primary text-white px-6 py-2 rounded-md font-bold uppercase tracking-wide hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm"
+              className="bg-primary text-white px-7 py-3 rounded-md text-base font-bold uppercase tracking-wide hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm"
             >
-              <Heart size={16} fill="currentColor" />
               <span>Donate</span>
             </Link>
           </nav>
@@ -232,7 +231,6 @@ export const Header = () => {
                 onClick={() => setIsOpen(false)}
                 className="mt-6 bg-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2 shadow-md uppercase tracking-wide"
               >
-                <Heart size={20} fill="currentColor" />
                 <span>Donate Now</span>
               </Link>
             </div>
