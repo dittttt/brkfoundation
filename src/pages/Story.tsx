@@ -91,13 +91,10 @@ export default function Story() {
 
             {/* Timeline */}
             <div className="relative">
-                {/* Central Line (Desktop) */}
-                <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent md:-translate-x-1/2 hidden md:block" />
-                
-                {/* Mobile Line */}
-                <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent md:hidden" />
+                {/* Central Line (Desktop & Mobile) */}
+                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent -translate-x-1/2" />
 
-                <div className="space-y-24">
+                <div className="space-y-24 md:space-y-24 mt-10">
                     {timelineBlocks.map((block, idx) => (
                         <TimelineBlock 
                           key={idx}

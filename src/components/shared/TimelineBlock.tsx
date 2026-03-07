@@ -17,15 +17,15 @@ export interface TimelineBlockProps {
 
 export const TimelineBlock: React.FC<TimelineBlockProps> = ({ year, image, title, events, isEven }) => {
   return (
-    <div className={`relative flex flex-col md:flex-row items-center ${isEven ? 'md:flex-row-reverse' : ''}`}>
+    <div className={`relative flex flex-col md:flex-row items-center gap-6 md:gap-0 ${isEven ? 'md:flex-row-reverse' : ''}`}>
       
-      {/* Timeline Dot */}
-      <div className="absolute left-8 md:left-1/2 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-md z-20 transform -translate-x-1/2 mt-8 md:mt-0" />
+      {/* Timeline Dot (Desktop & Mobile) */}
+      <div className="absolute left-1/2 md:top-1/2 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-md z-20 transform -translate-x-1/2 md:-translate-y-1/2 -top-10 md:top-auto" />
 
       {/* Content Side */}
-      <div className={`w-full md:w-1/2 pl-20 md:pl-0 ${isEven ? 'md:pl-16' : 'md:pr-16'}`}>
+      <div className={`w-full md:w-1/2 px-4 md:px-0 z-10 ${isEven ? 'md:pl-16' : 'md:pr-16'}`}>
         <FadeIn delay={0.1} className="h-full">
-          <div className="bg-white p-8 rounded-2xl shadow-xl shadow-gray-100 border border-gray-100 hover:shadow-2xl transition-all duration-300 group h-full">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl shadow-gray-100 border border-gray-100 hover:shadow-2xl transition-all duration-300 group h-full">
             <div className="flex items-center justify-between mb-6">
               <span className="text-5xl font-display font-black text-gray-100 group-hover:text-primary/10 transition-colors duration-300">
                 {year}
@@ -55,7 +55,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ year, image, title
       </div>
 
       {/* Image Side */}
-      <div className={`w-full md:w-1/2 pl-20 md:pl-0 mt-8 md:mt-0 ${isEven ? 'md:pr-16' : 'md:pl-16'}`}>
+      <div className={`w-full md:w-1/2 px-4 md:px-0 mt-4 md:mt-0 z-10 ${isEven ? 'md:pr-16' : 'md:pl-16'}`}>
         <FadeIn delay={0.2}>
           <div className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/3]">
             <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 mix-blend-multiply" />
