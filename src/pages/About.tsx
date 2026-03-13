@@ -105,7 +105,7 @@ export default function About() {
                     <Target size={32} />
                   </div>
                   <h3 className="text-4xl font-display font-bold text-white mb-6">Our Mission</h3>
-                  <p className="text-gray-300 text-lg leading-relaxed">
+                  <p className="text-lg text-gray-300 leading-relaxed">
                     As a leader for a warm society, BRK Foundation is dedicated to volunteering and sharing, creating a healthy community where people can live together in harmony.
                   </p>
                 </div>
@@ -118,17 +118,15 @@ export default function About() {
       {/* Core Values Section */}
       <Section bg="white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
-            <div>
-              <h2 className="text-5xl font-black text-dark uppercase tracking-tight mb-4">Core Values</h2>
-              <div className="w-20 h-2 bg-primary rounded-full"></div>
-            </div>
-            <p className="text-xl text-gray-500 font-medium max-w-md text-right md:text-left">
+          <div className="mb-16">
+            <h2 className="text-5xl font-black text-dark uppercase tracking-tight mb-4">Core Values</h2>
+            <div className="w-20 h-2 bg-primary rounded-full mb-6"></div>
+            <p className="text-xl text-gray-500 font-medium max-w-2xl">
               The fundamental beliefs that shape our culture and impact.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             {[
               { 
                 icon: Heart, 
@@ -150,12 +148,12 @@ export default function About() {
               }
             ].map((val, idx) => (
               <FadeIn key={idx} delay={idx * 0.1} className="group">
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                  <div className={`w-14 h-14 ${val.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <val.icon size={28} />
+                <div className="bg-white p-6 md:p-8 rounded-2xl md:rounded-3xl border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full items-center text-center sm:items-start sm:text-left flex flex-col sm:block">
+                  <div className={`w-12 h-12 md:w-14 md:h-14 ${val.color} rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <val.icon className="w-6 h-6 md:w-7 md:h-7" />
                   </div>
-                  <h3 className="text-2xl font-display font-bold text-dark mb-4 group-hover:text-primary transition-colors">{val.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{val.desc}</p>
+                  <h3 className="text-xl md:text-2xl font-display font-bold text-dark mb-3 md:mb-4 group-hover:text-primary transition-colors">{val.title}</h3>
+                  <p className="text-sm md:text-base text-gray-600 leading-relaxed max-w-[280px] sm:max-w-none">{val.desc}</p>
                 </div>
               </FadeIn>
             ))}

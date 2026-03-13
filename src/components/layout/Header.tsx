@@ -72,6 +72,11 @@ const Dropdown = ({ title, items, mobile = false, onClose }: { title: string, it
       onMouseLeave={() => setIsOpen(false)}
     >
       <button 
+        onClick={(e) => {
+          // Allow toggle on touch devices
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }}
         className={clsx(
           "flex items-center gap-1 text-base font-bold uppercase tracking-wide transition-colors py-2",
           isOpen ? "text-primary" : "text-dark hover:text-primary"

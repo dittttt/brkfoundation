@@ -97,22 +97,22 @@ export const Carousel = ({
         <>
           <button 
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all opacity-50 hover:opacity-100"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-md text-white hover:bg-white/60 transition-all"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={28} />
           </button>
           <button 
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 transition-all opacity-50 hover:opacity-100"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-md text-white hover:bg-white/60 transition-all"
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={28} />
           </button>
         </>
       )}
 
       {/* Indicators */}
       {showIndicators && (
-        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        <div className="absolute bottom-[160px] md:bottom-[200px] left-1/2 -translate-x-1/2 z-[60] flex gap-3 items-center pointer-events-auto">
           {slides.map((_, idx) => (
             <button
               key={idx}
@@ -124,6 +124,12 @@ export const Carousel = ({
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
+          <div className="ml-4 pl-3 border-l border-white/30 flex items-center gap-1 text-white/60 text-xs font-bold">
+            <svg className="w-4 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m0 0l-7-7m7 7l7-7" />
+            </svg>
+            <span>Scroll</span>
+          </div>
         </div>
       )}
     </div>

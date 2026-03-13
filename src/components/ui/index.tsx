@@ -25,7 +25,7 @@ export const Section = ({
   };
 
   return (
-    <section id={id} className={clsx("py-20 px-6", bgColors[bg], className)}>
+    <section id={id} className={clsx("py-12 md:py-20 px-6", bgColors[bg], className)}>
       <div className="max-w-7xl mx-auto">
         {children}
       </div>

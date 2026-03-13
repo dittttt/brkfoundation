@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section, PageHeader, FadeIn } from '../components/ui';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { TimelineBlock } from '../components/shared/TimelineBlock';
+import { motion, useScroll, useSpring } from 'framer-motion';
 
 export default function Story() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"]
+  });
+
+  const scaleY = useSpring(scrollYProgress, { stiffness: 50, damping: 20, restDelta: 0.001 });
+
   const timelineBlocks = [
     {
       year: "2018",
@@ -90,11 +99,17 @@ export default function Story() {
             </div>
 
             {/* Timeline */}
-            <div className="relative">
-                {/* Central Line (Desktop & Mobile) */}
-                <div className="absolute left-1/2 -top-16 bottom-0 w-px bg-gradient-to-b from-gray-200 via-gray-300 to-transparent -translate-x-1/2" />
-
-                <div className="space-y-24 md:space-y-24 mt-10">
+            <div className="relative pt-4 pb-12" ref={containerRef}>
+                {/* Central Static Background Line */}
+                <div className="absolute left-[39.5px] md:left-1/2 top-4 bottom-16 w-1 bg-gray-200 -translate-x-1/2 rounded-full" />
+                
+                {/* Animated Scroll Progress Line */}
+                <motion.div 
+                    className="absolute left-[39.5px] md:left-1/2 top-4 bottom-16 w-1 bg-primary -translate-x-1/2 origin-top rounded-full z-10"
+                    style={{ scaleY }}
+                />
+                
+                <div className="space-y-16 md:space-y-32 relative z-20 py-10">
                     {timelineBlocks.map((block, idx) => (
                         <TimelineBlock 
                           key={idx}

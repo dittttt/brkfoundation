@@ -31,11 +31,11 @@ export const GalleryCard: React.FC<GalleryCardProps> = ({ item, delay = 0 }) => 
             </div>
           </div>
         </div>
-        <div className="p-4 flex flex-col flex-grow">
-          <h4 className="font-bold text-dark text-sm leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+        <div className="p-3 md:p-4 flex flex-col flex-grow">
+          <h4 className="font-bold text-dark text-xs md:text-sm leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
             {item.title}
           </h4>
-          <div className="mt-auto pt-2 border-t border-gray-100 text-xs text-gray-500 font-mono">
+          <div className="mt-auto pt-2 border-t border-gray-100 text-[10px] md:text-xs text-gray-500 font-mono">
             {item.date}
           </div>
         </div>

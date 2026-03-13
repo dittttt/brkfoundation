@@ -1,6 +1,7 @@
-import React from 'react';
-import { Calendar, MapPin } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Calendar } from 'lucide-react';
 import { FadeIn } from '../ui';
+import { motion, useInView } from 'framer-motion';
 
 interface TimelineEvent {
   date: string;
@@ -16,37 +17,60 @@ export interface TimelineBlockProps {
 }
 
 export const TimelineBlock: React.FC<TimelineBlockProps> = ({ year, image, title, events, isEven }) => {
+  const blockRef = useRef(null);
+
+  // Use a very tight margin (2% trigger zone in exact middle) so only one section locks in at a time
+  const isInView = useInView(blockRef, { margin: "-49% 0px -49% 0px" });
+
   return (
-    <div className={`relative flex flex-col md:flex-row items-center gap-6 md:gap-0 ${isEven ? 'md:flex-row-reverse' : ''}`}>
+    <div ref={blockRef} className={`relative flex flex-col md:flex-row items-stretch gap-10 md:gap-0 ${isEven ? 'md:flex-row-reverse' : ''} pt-8 md:pt-0`}>
       
-      {/* Timeline Dot (Desktop & Mobile) */}
-      <div className="absolute left-1/2 -top-12 md:top-1/2 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-md z-20 transform -translate-x-1/2 -translate-y-1/2" />
+      {/* Timeline Dot Wrapper */}
+      <div 
+        className="absolute left-[39.5px] top-1/2 md:left-1/2 md:top-1/2 pointer-events-none z-20 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
+      >
+        <motion.div 
+          animate={{
+            backgroundColor: isInView ? '#0284c7' : '#d1d5db',
+            scale: isInView ? 1.2 : 1
+          }}
+          transition={{ duration: 0.3 }}
+          className="w-5 h-5 rounded-full border-[3px] border-white shadow-sm z-30 flex items-center justify-center" 
+        >
+          {isInView && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.15 }}
+              className="w-1.5 h-1.5 bg-white rounded-full"
+            />
+          )}
+        </motion.div>
+      </div>
 
       {/* Content Side */}
-      <div className={`w-full md:w-1/2 px-4 md:px-0 z-10 ${isEven ? 'md:pl-16' : 'md:pr-16'}`}>
-        <FadeIn delay={0.1} className="h-full">
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl shadow-gray-100 border border-gray-100 hover:shadow-2xl transition-all duration-300 group h-full">
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-5xl font-display font-black text-gray-100 group-hover:text-primary/10 transition-colors duration-300">
-                {year}
-              </span>
-              {title && (
-                <span className="text-sm font-bold text-primary uppercase tracking-wider bg-primary/5 px-3 py-1 rounded-full">
-                  {title}
-                </span>
-              )}
-            </div>
+      <div className={`w-full md:w-1/2 flex flex-col justify-center pl-[80px] pr-4 md:px-0 z-10 ${isEven ? 'md:pl-20 md:pr-0' : 'md:pr-20 md:pl-0'}`}>
+        <FadeIn delay={0.1} className="w-full">
+          <div className="py-6">
+            <span className={`text-4xl md:text-5xl font-display font-black mb-2 tracking-tight transition-colors duration-300 block ${isInView ? 'text-primary' : 'text-gray-300'}`}>
+              {year}
+            </span>
+            <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-8 leading-tight">
+              {title}
+            </h3>
             
-            <div className="space-y-6">
+            <div className="space-y-4 text-gray-600">
               {events.map((ev, i) => (
-                <div key={i} className="relative pl-6 border-l-2 border-gray-100 group-hover:border-primary/30 transition-colors duration-300">
-                  <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
-                    <Calendar className="w-3 h-3" />
-                    {ev.date}
+                <div key={i} className="relative group">
+                  <div className={`flex bg-gray-50/50 rounded-xl p-5 border flex-col transition-all duration-300 ${isInView ? 'border-primary/20 bg-white shadow-sm' : 'border-gray-100 group-hover:bg-white group-hover:border-primary/20'}`}>
+                    <span className={`text-xs font-bold tracking-wider mb-2 block flex items-center gap-2 transition-colors duration-300 ${isInView ? 'text-primary' : 'text-gray-400 group-hover:text-primary'}`}>
+                        <Calendar className="w-3.5 h-3.5" />
+                        {ev.date}
+                    </span>
+                    <p className="text-[15px] leading-relaxed font-medium">
+                      {ev.desc}
+                    </p>
                   </div>
-                  <p className="text-gray-600 font-medium leading-relaxed">
-                    {ev.desc}
-                  </p>
                 </div>
               ))}
             </div>
@@ -55,22 +79,15 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({ year, image, title
       </div>
 
       {/* Image Side */}
-      <div className={`w-full md:w-1/2 px-4 md:px-0 mt-4 md:mt-0 z-10 ${isEven ? 'md:pr-16' : 'md:pl-16'}`}>
-        <FadeIn delay={0.2}>
-          <div className="relative group overflow-hidden rounded-2xl shadow-lg aspect-[4/3]">
-            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 mix-blend-multiply" />
+      <div className={`w-full md:w-1/2 flex items-center justify-center pl-[80px] pr-4 md:px-0 z-10 ${isEven ? 'md:pr-20 md:pl-0' : 'md:pl-20 md:pr-0'} mt-8 md:mt-0`}>
+        <FadeIn delay={0.2} y={20} className="w-full">
+          <div className={`relative group overflow-hidden rounded-[2rem] aspect-video bg-gray-100 border shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-colors duration-300 ${isInView ? 'border-primary/20' : 'border-gray-100'}`}>
             <img 
               src={image} 
               alt={`Story from ${year}`} 
-              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+              className={`w-full h-full object-cover transform transition-transform duration-1000 ${isInView ? 'scale-105' : 'group-hover:scale-105'}`}
               referrerPolicy="no-referrer"
             />
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20">
-              <p className="text-white font-medium text-sm flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                Cebu, Philippines
-              </p>
-            </div>
           </div>
         </FadeIn>
       </div>

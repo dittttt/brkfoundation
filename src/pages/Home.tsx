@@ -9,9 +9,11 @@ import { PartnersSection } from '../components/home/PartnersSection';
 export default function Home() {
   return (
     <MainLayout>
-      <HeroSection />
+      <div className="relative">
+        <HeroSection />
+        <ImpactStats />
+      </div>
       <IntroSection />
-      <ImpactStats />
       <RecentActivities />
       <PartnersSection />
     </MainLayout>

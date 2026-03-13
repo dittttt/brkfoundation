@@ -56,7 +56,7 @@ export default function Programs() {
 
                 <div className="mb-12">
                   <h3 className="text-2xl font-bold text-dark mb-2">Nutrition Support Project</h3>
-                  <p className="text-sm font-mono text-gray-500 uppercase tracking-widest">2018 - 2023 (APR.)</p>
+                  <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">2018 - 2023 (APR.)</p>
                 </div>
 
                 <div className="space-y-8">
@@ -64,39 +64,39 @@ export default function Programs() {
                   <div className="group">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-4 mb-2 group-hover:border-primary transition-colors duration-300">
                       <span className="text-lg font-medium text-gray-500 group-hover:text-primary transition-colors">Rice Noodles</span>
-                      <div className="text-right">
+                      <div className="text-right flex items-baseline gap-2">
                         <span className="text-4xl font-display font-bold text-dark block">
                           <Counter end={75120} />
                         </span>
+                        <span className="text-xs font-bold text-gray-400 group-hover:text-primary transition-colors duration-300 uppercase tracking-widest">BOWLS</span>
                       </div>
                     </div>
-                    <div className="text-right text-xs font-bold text-gray-400 uppercase tracking-widest">Bowls Served</div>
                   </div>
 
                   {/* Stat Item 2 */}
                   <div className="group">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-4 mb-2 group-hover:border-primary transition-colors duration-300">
                       <span className="text-lg font-medium text-gray-500 group-hover:text-primary transition-colors">Chicken</span>
-                      <div className="text-right">
+                      <div className="text-right flex items-baseline gap-2">
                         <span className="text-4xl font-display font-bold text-dark block">
                           <Counter end={200} />
                         </span>
+                        <span className="text-xs font-bold text-gray-400 group-hover:text-primary transition-colors duration-300 uppercase tracking-widest">PIECES</span>
                       </div>
                     </div>
-                    <div className="text-right text-xs font-bold text-gray-400 uppercase tracking-widest">Pieces Served</div>
                   </div>
 
                   {/* Stat Item 3 */}
                   <div className="group">
                     <div className="flex items-baseline justify-between border-b border-gray-200 pb-4 mb-2 group-hover:border-primary transition-colors duration-300">
                       <span className="text-lg font-medium text-gray-500 group-hover:text-primary transition-colors">Asian Fruit</span>
-                      <div className="text-right">
+                      <div className="text-right flex items-baseline gap-2">
                         <span className="text-4xl font-display font-bold text-dark block">
                           <Counter end={432} />
                         </span>
+                        <span className="text-xs font-bold text-gray-400 group-hover:text-primary transition-colors duration-300 uppercase tracking-widest">BOXES</span>
                       </div>
                     </div>
-                    <div className="text-right text-xs font-bold text-gray-400 uppercase tracking-widest">Boxes Distributed</div>
                   </div>
                 </div>
               </FadeIn>

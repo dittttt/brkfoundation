@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section, PageHeader, FadeIn } from '../components/ui';
 import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
@@ -7,6 +7,17 @@ import { GalleryCard } from '../components/shared/GalleryCard';
 
 export default function News() {
   const [activeYear, setActiveYear] = useState('All');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 200;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const newsItems = [
     {
@@ -84,8 +95,8 @@ export default function News() {
 
       {/* News Section */}
       <Section bg="white">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-gray-100 pb-4 gap-4">
-          <div className="text-sm font-medium text-gray-500">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 border-b border-gray-100 pb-4 gap-4">
+          <div className="text-sm font-medium text-gray-500 w-full md:w-auto text-left">
             Total <span className="text-primary font-bold">3</span>건 1 페이지
           </div>
           <div className="relative w-full md:w-64">
@@ -115,30 +126,57 @@ export default function News() {
         </div>
         
         {/* Gallery Controls */}
-        <div className="mb-10 space-y-6">
+        <div className="mb-0 md:mb-10 space-y-6">
           {/* Filters */}
-          <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-            {years.map((year) => (
-              <button
-                key={year}
-                onClick={() => setActiveYear(year)}
-                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
-                  activeYear === year 
-                    ? 'bg-primary text-white shadow-md transform scale-105' 
-                    : 'bg-white text-gray-500 hover:bg-gray-100'
-                }`}
-              >
-                {year}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 md:block">
+            {/* Mobile Left Arrow */}
+            <button 
+              onClick={() => scroll('left')}
+              className="md:hidden shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50"
+            >
+              <ChevronLeft size={18} />
+            </button>
+
+            <div 
+              ref={scrollContainerRef}
+              className="flex-1 overflow-x-auto flex gap-2 md:flex-wrap md:justify-start py-2 scroll-smooth snap-x min-w-0"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <style>{`
+                div::-webkit-scrollbar {
+                  display: none;
+                }
+              `}</style>
+              {years.map((year) => (
+                <button
+                  key={year}
+                  onClick={() => setActiveYear(year)}
+                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap snap-start shrink-0 ${
+                    activeYear === year 
+                      ? 'bg-primary text-white shadow-md transform scale-[1.02] border border-primary' 
+                      : 'bg-white text-dark border border-dark hover:bg-gray-50'
+                  }`}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+
+            {/* Mobile Right Arrow */}
+            <button 
+              onClick={() => scroll('right')}
+              className="md:hidden shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
 
           {/* Search and Count */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm font-medium text-gray-500 order-2 md:order-1">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-6 md:mt-0 mb-6 md:mb-0">
+            <div className="text-sm font-medium text-gray-500 w-full md:w-auto text-left">
               Total <span className="text-primary font-bold">265</span>건 1 페이지
             </div>
-            <div className="relative w-full md:w-64 order-1 md:order-2">
+            <div className="relative w-full md:w-64">
               <input 
                 type="text" 
                 placeholder="Search gallery..." 
@@ -152,7 +190,7 @@ export default function News() {
         </div>
         
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
           {galleryItems.map((item, idx) => (
             <GalleryCard key={idx} item={item} delay={idx * 0.05} />
           ))}

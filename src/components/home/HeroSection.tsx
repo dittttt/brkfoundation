@@ -13,7 +13,7 @@ const HERO_SLIDES = [
 
 export const HeroSection = () => {
   return (
-    <div className="relative h-[calc(100vh-6rem)] min-h-[600px] flex items-center justify-center overflow-hidden bg-gray-900">
+    <div className="relative h-[90vh] min-h-[700px] md:min-h-[850px] flex items-center justify-center overflow-hidden bg-gray-900 pb-16">
       {/* Background Carousel */}
       <div className="absolute inset-0 z-0">
         <Carousel 
@@ -28,19 +28,19 @@ export const HeroSection = () => {
       </div>
       
       {/* Hero Content */}
-      <div className="relative z-20 text-center px-6 max-w-screen-2xl mx-auto mt-16">
-        <FadeIn>
+      <div className="relative z-20 w-full max-w-screen-2xl mx-auto px-6 -mt-16 md:-mt-24">
+        <FadeIn className="text-center max-w-4xl mx-auto flex flex-col items-center">
           <div className="inline-flex items-center gap-2 py-2 px-6 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold tracking-wider uppercase mb-8 shadow-xl">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             Non-Profit Organization
           </div>
           
-          <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-display font-black text-white mb-8 leading-[0.9] tracking-tight uppercase drop-shadow-2xl">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-display font-black text-white mb-8 leading-[1.0] tracking-tight uppercase drop-shadow-2xl">
             Make Laughter <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Last Forever</span>
           </h1>
           
-          <p className="text-base md:text-xl 2xl:text-2xl text-gray-200 max-w-4xl mx-auto mb-12 font-medium leading-relaxed drop-shadow-lg">
+          <p className="text-base md:text-xl 2xl:text-2xl text-gray-200 mb-12 font-medium leading-relaxed drop-shadow-lg max-w-3xl">
             Your love and sharing can help children grow their hopes and dreams. 
             Even a small donation can save a neighbor and give hope for the future.
           </p>
@@ -57,11 +57,11 @@ export const HeroSection = () => {
         </FadeIn>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce text-white/50">
-        <div className="w-6 h-10 rounded-full border-2 border-white/30 flex justify-center pt-2">
-          <div className="w-1 h-2 bg-white rounded-full" />
-        </div>
+      {/* Curved Bottom Wave */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-20 pointer-events-none translate-y-[1px]">
+        <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-[50px] md:h-[120px] text-white fill-current">
+          <path d="M0,0 C320,120 1120,120 1440,0 L1440,120 L0,120 Z"></path>
+        </svg>
       </div>
     </div>
   );

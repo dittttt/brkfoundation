@@ -16,7 +16,7 @@ export const IntroSection = () => {
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-dark/10 group-hover:bg-transparent transition-colors duration-500" />
+            <div className="absolute inset-0 bg-dark/5 group-hover:bg-transparent transition-colors duration-500" />
           </div>
           {/* Floating Badge */}
           <div className="absolute -bottom-6 -right-6 bg-white py-4 px-6 rounded-2xl shadow-2xl hidden md:flex items-center gap-4 animate-float border border-gray-100/50">

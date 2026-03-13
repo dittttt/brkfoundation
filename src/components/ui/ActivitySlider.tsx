@@ -59,16 +59,17 @@ export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) =>
               key={idx} 
               className="flex-[0_0_70%] md:flex-[0_0_35%] lg:flex-[0_0_22%] min-w-0 pl-6"
             >
-              <div className="bg-white rounded-3xl overflow-hidden shadow-sm transition-all duration-300 h-full">
+              <div className="bg-white rounded-3xl overflow-hidden shadow-sm h-full group">
                 <div className="relative overflow-hidden aspect-square">
                   <img 
                     src={item.image} 
                     alt={item.title} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-                  <div className="absolute bottom-0 left-0 p-8 text-white w-full">
+                  <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/60" />
+                  <div className="absolute inset-0 flex flex-col justify-end p-8 text-white opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
                     <h3 className="text-2xl font-display font-bold mb-4 leading-tight">{item.title}</h3>
                     <p className="text-sm font-medium opacity-80 uppercase tracking-wider">{item.date}</p>
                   </div>
@@ -83,12 +84,11 @@ export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) =>
       <div className="mt-2 px-2 md:px-0 max-w-xs mx-auto">
         <div className="relative h-1 w-full bg-gray-200 rounded-full overflow-hidden">
           <div
-            className="absolute top-0 bottom-0 bg-black rounded-full"
-            style={{ width: '25%', left: `${scrollProgress}%` }}
-          />
-          <div
-            className="absolute top-0 bottom-0 bg-black rounded-full"
-            style={{ width: '25%', left: `${scrollProgress - 100}%` }}
+            className="absolute top-0 bottom-0 bg-black rounded-full w-[25%]"
+            style={{ 
+              transform: `translate3d(${scrollProgress * 3}%, 0, 0)`,
+              willChange: 'transform'
+            }}
           />
         </div>
       </div>

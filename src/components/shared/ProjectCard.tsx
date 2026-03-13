@@ -28,8 +28,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   children 
 }) => {
   return (
-    <div className="grid lg:grid-cols-2 gap-16 items-center">
-      <FadeIn className={`relative h-[500px] rounded-3xl overflow-hidden shadow-2xl group ${reverse ? 'lg:order-2' : ''}`}>
+    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <FadeIn className={`relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl group ${reverse ? 'lg:order-2' : ''}`}>
         <img 
           src={image} 
           alt={title} 

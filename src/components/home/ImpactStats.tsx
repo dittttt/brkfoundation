@@ -1,34 +1,33 @@
 import React from 'react';
-import { Globe, Heart, Users } from 'lucide-react';
-import { Section, FadeIn } from '../ui';
+import { FadeIn, Counter } from '../ui';
 
 export const ImpactStats = () => {
   return (
-    <Section bg="dark" className="relative overflow-hidden py-32">
-      <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent rounded-full blur-[120px]" />
+    <div className="relative z-20 max-w-5xl mx-auto px-4 -mt-24 sm:-mt-28 md:-mt-32 mb-12 sm:mb-24 pointer-events-none">
+      <div className="bg-[#111111] backdrop-blur-xl rounded-[2.5rem] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.5)] py-6 md:py-8 px-6 md:px-10 relative overflow-hidden border border-white/5 pointer-events-auto">
+        <div className="flex flex-row justify-around items-center flex-wrap gap-4 md:gap-2 relative z-10 w-full">
+          {[
+            { label: "ESTABLISHED IN", value: 2018, unit: "" },
+            { label: "DONATION", value: 75120, unit: "BOWLS" },
+            { label: "PROJECTS", value: "W.I.P.", unit: "" },
+            { label: "SUPPORT FOR", value: 80, unit: "PLACES" },
+          ].map((stat, idx) => (
+            <FadeIn key={idx} delay={idx * 0.1} className="text-center group flex-1 min-w-[120px]">
+              <div className="text-3xl md:text-4xl lg:text-5xl font-display font-black text-white mb-1 md:mb-2 flex flex-row items-baseline justify-center tracking-tighter drop-shadow-md">
+                {typeof stat.value === 'string' || stat.label === "ESTABLISHED IN" ? (
+                  stat.value
+                ) : (
+                  <Counter end={stat.value} duration={2500} />
+                )}
+                {stat.unit && <span className="font-sans text-gray-400 text-sm md:text-base font-bold ml-2 tracking-widest">{stat.unit}</span>}
+              </div>
+              <div className="font-sans text-gray-400 font-bold text-[9px] md:text-[10px] tracking-widest uppercase transition-colors group-hover:text-white">
+                {stat.label}
+              </div>
+            </FadeIn>
+          ))}
+        </div>
       </div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-12 relative z-10 max-w-screen-2xl mx-auto">
-        {[
-          { label: "ESTABLISHED IN", value: "2018", icon: Globe },
-          { label: "DONATION", value: "75,120", unit: "BOWLS", icon: Heart },
-          { label: "PROJECTS FINISHED", value: "W.I.P.", icon: Users },
-          { label: "SUPPORT FOR", value: "80", unit: "PLACES", icon: Globe },
-        ].map((stat, idx) => (
-          <FadeIn key={idx} delay={idx * 0.1} className="text-center group">
-            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-              <stat.icon className="w-8 h-8 text-white" />
-            </div>
-            <div className="text-gray-400 text-sm font-bold uppercase tracking-widest mb-2">{stat.label}</div>
-            <div className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white flex items-baseline justify-center gap-2">
-              {stat.value}
-              {stat.unit && <span className="text-lg md:text-xl lg:text-2xl font-bold text-gray-400">{stat.unit}</span>}
-            </div>
-          </FadeIn>
-        ))}
-      </div>
-    </Section>
+    </div>
   );
 };
