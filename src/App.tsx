@@ -12,6 +12,13 @@ import Contact from './pages/Contact';
 import News from './pages/News';
 import PostDetail from './pages/PostDetail';
 
+// Admin Pages
+import AdminLayout from './layouts/AdminLayout';
+import AdminLogin from './pages/admin/Login';
+import AdminDashboard from './pages/admin/Dashboard';
+import ManageNews from './pages/admin/ManageNews';
+import ManageGallery from './pages/admin/ManageGallery';
+
 export default function App() {
   return (
     <Router>
@@ -29,6 +36,14 @@ export default function App() {
         <Route path="/donate" element={<Donate />} />
         <Route path="/news/:slug" element={<PostDetail type="news" />} />
         <Route path="/gallery/:slug" element={<PostDetail type="gallery" />} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="login" element={<AdminLogin />} />
+          <Route index element={<AdminDashboard />} />
+          <Route path="news" element={<ManageNews />} />
+          <Route path="gallery" element={<ManageGallery />} />
+        </Route>
       </Routes>
     </Router>
   );

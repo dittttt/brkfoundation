@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section, PageHeader, FadeIn } from '../components/ui';
-import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { NewsCard } from '../components/shared/NewsCard';
 import { GalleryCard } from '../components/shared/GalleryCard';
 import { supabase } from '../lib/supabase';
@@ -21,12 +21,16 @@ const DUMMY_GALLERY = [
     title: "Feeding Program (BRGY. APAS GYM)",
     date: "2025.10.12",
     image: "https://picsum.photos/seed/community/400/300",
-    slug: "feeding-program-apas"
+    slug: "feeding-program-apas",
+    views: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   }
 ];
 
 export default function News() {
   const [activeYear, setActiveYear] = useState('All');
+  const [gallerySort, setGallerySort] = useState('newest');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [news, setNews] = useState<any[]>([]);
@@ -59,7 +63,10 @@ export default function News() {
             title: g.title,
             date: new Date(g.created_at).toLocaleDateString(),
             image: g.image_url,
-            slug: g.slug
+            slug: g.slug,
+            views: g.views || 0,
+            created_at: g.created_at,
+            updated_at: g.updated_at || g.created_at
           })));
         } else {
           setGallery(DUMMY_GALLERY);
@@ -86,6 +93,26 @@ export default function News() {
   };
 
   const years = ['All', ...Array.from({ length: 9 }, (_, i) => (2018 + i).toString())];
+
+  const sortedGallery = React.useMemo(() => {
+    let sorted = [...gallery];
+    switch (gallerySort) {
+      case 'oldest':
+        sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        break;
+      case 'last_updated':
+        sorted.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+        break;
+      case 'most_popular':
+        sorted.sort((a, b) => b.views - a.views);
+        break;
+      case 'newest':
+      default:
+        sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+    }
+    return sorted;
+  }, [gallery, gallerySort]);
 
   return (
     <MainLayout>
@@ -178,15 +205,30 @@ export default function News() {
             <div className="text-sm font-medium text-gray-500 w-full md:w-auto text-left">
               Total <span className="text-primary font-bold">{gallery.length}</span> items
             </div>
-            <div className="relative w-full md:w-64">
-              <input 
-                type="text" 
-                placeholder="Search gallery..." 
-                className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white"
-              />
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
-                <Search size={16} />
-              </button>
+            <div className="flex gap-2 w-full md:w-auto">
+              <div className="relative flex-1 md:w-64">
+                <input 
+                  type="text" 
+                  placeholder="Search gallery..." 
+                  className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white"
+                />
+                <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                  <Search size={16} />
+                </button>
+              </div>
+              <div className="relative shrink-0">
+                <select 
+                  value={gallerySort}
+                  onChange={(e) => setGallerySort(e.target.value)}
+                  className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white text-gray-700 font-medium"
+                >
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="last_updated">Last Updated</option>
+                  <option value="most_popular">Most Popular</option>
+                </select>
+                <Filter className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+              </div>
             </div>
           </div>
         </FadeIn>
@@ -195,7 +237,7 @@ export default function News() {
           <div className="py-10 text-center text-gray-500">Loading gallery...</div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
-            {gallery.map((item, idx) => (
+            {sortedGallery.map((item, idx) => (
               <GalleryCard key={idx} item={item} delay={idx * 0.05} />
             ))}
           </div>

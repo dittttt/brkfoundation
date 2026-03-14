@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section } from '../components/ui';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Eye } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface PostDetailProps {
@@ -31,6 +31,13 @@ export default function PostDetail({ type }: PostDetailProps) {
 
         if (error) throw error;
         setPost(data);
+
+        // Increment views asynchronously
+        supabase.rpc('increment_view_count', { 
+          table_type: type, 
+          row_slug: slug 
+        }).then();
+        
       } catch (err) {
         console.error("Error fetching post details:", err);
       } finally {
@@ -68,6 +75,7 @@ export default function PostDetail({ type }: PostDetailProps) {
   }
 
   const dateStr = new Date(post.created_at || post.published_at).toLocaleDateString();
+  const updatedDateStr = post.updated_at ? new Date(post.updated_at).toLocaleDateString() : dateStr;
   const yearStr = new Date(post.created_at || post.published_at).getFullYear();
 
   return (
@@ -81,13 +89,25 @@ export default function PostDetail({ type }: PostDetailProps) {
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl md:text-4xl font-display font-black text-dark leading-tight mb-3">
+          <h1 className="text-3xl md:text-4xl font-display font-black text-dark leading-tight mb-4">
             {post.title}
           </h1>
 
-          {/* Exact Date */}
-          <div className="text-gray-500 text-sm font-medium mb-10 pb-6 border-b border-gray-200">
-            {dateStr}
+          {/* Metadata: Date, Views, Last Updated */}
+          <div className="flex flex-wrap items-center gap-6 text-gray-500 text-sm font-medium mb-10 pb-6 border-b border-gray-200">
+            <div className="flex items-center gap-2">
+              <span>Published: {dateStr}</span>
+            </div>
+            {post.updated_at && post.updated_at !== post.created_at && (
+              <div className="flex items-center gap-2">
+                <Clock size={16} />
+                <span>Last updated: {updatedDateStr}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <Eye size={16} />
+              <span>{post.views || 0} views</span>
+            </div>
           </div>
 
           {/* Featured Image */}
