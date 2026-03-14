@@ -46,9 +46,9 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col sticky top-0 h-screen">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-black text-dark">BRK Admin</h2>
         </div>
@@ -93,7 +93,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 p-8 w-full overflow-x-hidden">
         <Outlet />
       </main>
     </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, GripVertical, Save, X, Eye } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, GripVertical, Save, X, Eye, Upload } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface NewsImage {
   url: string;
@@ -63,7 +65,7 @@ export default function ManageNews() {
       title: 'New Post Title',
       slug: 'new-post-title',
       content: 'Start writing your content here...',
-      created_at: new Date().toISOString().split('T')[0],
+      created_at: new Date().toISOString(),
       image_url: '',
       views: 0,
       images_data: []
@@ -75,31 +77,73 @@ export default function ManageNews() {
     if (!editingPost) return;
     setIsUpdating(true);
     try {
-      const postData = {
+      // Ensure we have a valid ISO string before saving
+      let validDate = new Date().toISOString();
+      try {
+        if (editingPost.created_at) validDate = new Date(editingPost.created_at).toISOString();
+      } catch (e) {
+        console.warn("Invalid date, fallback to now");
+      }
+
+      const postData: any = {
         title: editingPost.title,
         slug: editingPost.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
         content: editingPost.content,
-        created_at: new Date(editingPost.created_at).toISOString(),
+        created_at: validDate,
         updated_at: new Date().toISOString(),
         image_url: editingPost.image_url,
-        images_data: editingPost.images_data || []
       };
 
-      if (editingPost.id) {
-        const { error } = await supabase.from('news').update(postData).eq('id', editingPost.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('news').insert([postData]);
-        if (error) throw error;
+      try {
+        // Attempt to save with images_data (assuming user ran the SQL migration)
+        const postDataWithImages = { ...postData, images_data: editingPost.images_data || [] };
+        if (editingPost.id) {
+          const { error } = await supabase.from('news').update(postDataWithImages).eq('id', editingPost.id).select();
+          if (error) throw error;
+        } else {
+          const { error } = await supabase.from('news').insert([postDataWithImages]).select();
+          if (error) throw error;
+        }
+      } catch (e: any) {
+        // Fallback for when the images_data column is missing in Supabase
+        console.warn("Saving with images_data failed, retrying without images_data column (Update your Supabase schema!).", e.message);
+        if (editingPost.id) {
+          const { error } = await supabase.from('news').update(postData).eq('id', editingPost.id);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase.from('news').insert([postData]);
+          if (error) throw error;
+        }
       }
       
       await fetchPosts();
       setEditingPost(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving post:', error);
-      alert('Error saving post');
+      alert('Error saving post: ' + error.message);
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleImageUpload = async (file: File) => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('images') // Assumes bucket is named 'images'
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('images').getPublicUrl(filePath);
+      return data.publicUrl;
+    } catch (error: any) {
+      console.error('Upload Error:', error);
+      alert('Error uploading image. Make sure your Supabase Storage bucket "images" exists and is public.');
+      return null;
     }
   };
 
@@ -150,6 +194,22 @@ export default function ManageNews() {
     setEditingPost({ ...editingPost, images_data: newImages });
   };
 
+const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['link', 'clean']
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'link'
+  ];
+
   if (loading) return <div className="p-8 text-center text-gray-500">Loading news...</div>;
 
   if (editingPost) {
@@ -192,16 +252,42 @@ export default function ManageNews() {
                 <p>No featured image</p>
               </div>
             )}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <div className="bg-white p-4 rounded-xl shadow-lg w-full max-w-md mx-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image URL</label>
-                <input
-                  type="text"
-                  value={editingPost.image_url}
-                  onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })}
-                  className="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="https://example.com/image.jpg"
-                />
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-lg mx-4 flex flex-col gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Upload Image</label>
+                  <label className="flex items-center justify-center w-full px-4 py-3 bg-slate-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-slate-100 transition-colors">
+                    <Upload className="w-5 h-5 mr-2 text-gray-500" />
+                    <span className="text-sm text-gray-600 font-medium">Click to upload from device</span>
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const url = await handleImageUpload(file);
+                          if (url) setEditingPost({ ...editingPost, image_url: url });
+                        }
+                      }} 
+                    />
+                  </label>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex-1 border-t border-gray-200"></div>
+                  <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">OR</span>
+                  <div className="flex-1 border-t border-gray-200"></div>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
+                  <input
+                    type="text"
+                    value={editingPost.image_url}
+                    onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })}
+                    className="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-slate-50"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -213,8 +299,11 @@ export default function ManageNews() {
                 <Calendar className="w-4 h-4" />
                 <input
                   type="date"
-                  value={editingPost.created_at.split('T')[0]}
-                  onChange={(e) => setEditingPost({ ...editingPost, created_at: e.target.value })}
+                  value={editingPost.created_at ? editingPost.created_at.split('T')[0] : ''}
+                  onChange={(e) => {
+                    const dateVal = e.target.value ? new Date(e.target.value).toISOString() : new Date().toISOString();
+                    setEditingPost({ ...editingPost, created_at: dateVal });
+                  }}
                   className="bg-transparent border-none p-0 focus:ring-0 text-sm w-32 cursor-pointer focus:outline-none"
                 />
               </div>
@@ -233,14 +322,34 @@ export default function ManageNews() {
               placeholder="Post Title..."
             />
 
-            {/* Content */}
-            <div className="prose prose-blue max-w-none mb-12">
-              <textarea
+            {/* Content WYSIWYG Editor */}
+            <div className="mb-12">
+              <ReactQuill 
+                theme="snow" 
                 value={editingPost.content}
-                onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
-                className="w-full h-auto min-h-[300px] border-none p-0 focus:ring-0 text-lg leading-relaxed text-gray-700 resize-y bg-transparent"
+                onChange={(val) => setEditingPost({ ...editingPost, content: val })}
+                className="h-auto min-h-[300px] text-lg mb-6 WYSIWYG-editor"
                 placeholder="Write the full news story here..."
+                modules={modules}
+                formats={formats}
               />
+              <style>{`
+                .WYSIWYG-editor .ql-container {
+                  font-size: 1.125rem;
+                  font-family: inherit;
+                  border: none !important;
+                  min-height: 300px;
+                }
+                .WYSIWYG-editor .ql-toolbar {
+                  border: none !important;
+                  border-bottom: 2px solid #f1f5f9 !important;
+                  margin-bottom: 1rem;
+                  padding-bottom: 0.5rem;
+                }
+                .WYSIWYG-editor .ql-editor {
+                  padding: 1.5rem 0;
+                }
+              `}</style>
             </div>
 
             {/* Custom Gallery Builder (images_data) */}
@@ -278,23 +387,51 @@ export default function ManageNews() {
                     </div>
                     
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Image URL</label>
-                        <input
-                          type="text"
-                          value={img.url}
-                          onChange={(e) => updateImageItem(index, 'url', e.target.value)}
-                          className="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-slate-50"
-                          placeholder="https://..."
-                        />
-                      </div>
-                      <div className="space-y-2">
+                      {img.url ? (
+                        <div className="relative h-32 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 group">
+                          <img src={img.url} alt="Gallery item" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center flex-col gap-2">
+                            <span className="text-white text-xs font-bold px-2 py-1 bg-black/50 rounded pointer-events-none">Change Image</span>
+                            <div className="flex gap-2">
+                              <label className="p-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700">
+                                <Upload size={14} />
+                                <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const url = await handleImageUpload(file);
+                                    if (url) updateImageItem(index, 'url', url);
+                                  }
+                                }} />
+                              </label>
+                              <button onClick={() => updateImageItem(index, 'url', '')} className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-slate-50 gap-2 p-2 text-center">
+                          <label className="px-4 py-2 bg-white border border-gray-200 shadow-sm rounded-lg text-sm font-medium cursor-pointer hover:bg-slate-50">
+                            <Upload size={14} className="inline mr-2" /> Upload
+                            <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const url = await handleImageUpload(file);
+                                if (url) updateImageItem(index, 'url', url);
+                              }
+                            }} />
+                          </label>
+                          <span className="text-xs text-gray-400">or paste URL below</span>
+                          <input type="text" value={img.url} onChange={(e) => updateImageItem(index, 'url', e.target.value)} className="w-full text-xs px-2 py-1.5 rounded border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="https://" />
+                        </div>
+                      )}
+
+                      <div className="space-y-2 h-32 flex flex-col">
                         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Description/Caption</label>
-                        <input
-                          type="text"
+                        <textarea
                           value={img.description}
                           onChange={(e) => updateImageItem(index, 'description', e.target.value)}
-                          className="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-slate-50"
+                          className="w-full flex-grow border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-slate-50 resize-none"
                           placeholder="Image caption..."
                         />
                       </div>
@@ -358,7 +495,7 @@ export default function ManageNews() {
                 <div className="flex items-center gap-4 text-xs font-medium text-gray-500 mb-3">
                   <span className="flex items-center bg-slate-100 px-2.5 py-1 rounded-md">
                     <Calendar className="w-3.5 h-3.5 mr-1.5" />
-                    {new Date(post.date).toLocaleDateString()}
+                    {new Date(post.created_at).toLocaleDateString()}
                   </span>
                   <span className="flex items-center text-slate-400">
                     <Eye className="w-3.5 h-3.5 mr-1" />
@@ -370,9 +507,10 @@ export default function ManageNews() {
                   {post.title}
                 </h3>
                 
-                <p className="text-gray-500 text-sm line-clamp-2 mb-6 flex-grow">
-                  {post.content}
-                </p>
+                <div 
+                  className="text-gray-500 text-sm line-clamp-2 mb-6 flex-grow"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
                 
                 <div className="flex justify-end items-center gap-2 pt-4 border-t border-gray-50 mt-auto">
                   <button
