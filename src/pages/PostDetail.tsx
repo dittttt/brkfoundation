@@ -99,7 +99,7 @@ export default function PostDetail({ type }: PostDetailProps) {
   return (
     <MainLayout>
       {/* Banner Header instead of inline image */}
-      <div className="relative w-full h-[50vh] min-h-[400px] bg-dark flex flex-col justify-end">
+      <div className="relative w-full aspect-[21/9] max-h-[600px] bg-dark flex flex-col justify-end overflow-hidden">
         {post.image_url && (
           <div className="absolute inset-0 z-0">
             <img
@@ -112,7 +112,7 @@ export default function PostDetail({ type }: PostDetailProps) {
         )}
 
         {/* Banner Overlays */}
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pb-28 md:pb-32">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-10 md:px-12 pb-20">
           <div className="flex items-center gap-4 md:gap-6">
             <span className="text-secondary text-sm md:text-base font-bold uppercase tracking-widest">{yearStr}</span>
             <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-secondary"></span>
@@ -121,15 +121,15 @@ export default function PostDetail({ type }: PostDetailProps) {
         </div>
       </div>
 
-      <div className="w-full px-4 md:px-6 pt-0 -mt-16 md:-mt-20 relative z-20 pb-20">
-        <div className="max-w-5xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
+      <div className="w-full px-4 md:px-6 pt-0 -mt-12 relative z-20 pb-20">
+        <div className="max-w-5xl mx-auto bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-4">
+          <h1 className="text-2xl md:text-3xl font-display font-black text-gray-900 leading-tight mb-6">
             {post.title}
           </h1>
 
           {/* Metadata: Date, Views, Last Updated */}
-          <div className="flex flex-wrap items-center justify-between gap-6 text-gray-500 text-sm md:text-base font-medium mb-12 pb-6 border-b border-gray-100">
+          <div className="flex flex-wrap items-center justify-between gap-4 text-gray-500 text-sm font-medium mb-8 pb-5 border-b border-gray-100">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <span>{relativeTimeStr}</span>
@@ -141,14 +141,23 @@ export default function PostDetail({ type }: PostDetailProps) {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full">
-              <Eye size={16} />
-              <span>{post.views || 0} views</span>
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => navigator.clipboard.writeText(window.location.href)}
+                className="flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-medium text-sm md:text-base"
+              >
+                <Share2 size={16} />
+                <span>Share</span>
+              </button>
+              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full">
+                <Eye size={16} />
+                <span>{post.views || 0} views</span>
+              </div>
             </div>
           </div>
 
           {/* Content */}
-          <div className="prose max-w-none prose-p:my-4 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base mb-16 font-sans">
+          <div className="prose max-w-none prose-p:m-0 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base mb-16 font-sans">
               {type === 'news' && post.content && (!post.images_data || post.images_data.length === 0) && (
             
             <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />

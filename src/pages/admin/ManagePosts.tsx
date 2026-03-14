@@ -38,6 +38,20 @@ const QUILL_MODULES = {
 
 export default function ManagePosts() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollArrows, setShowScrollArrows] = useState(false);
+  
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (scrollContainerRef.current) {
+        const { scrollWidth, clientWidth } = scrollContainerRef.current;
+        setShowScrollArrows(scrollWidth > clientWidth);
+      }
+    };
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [years]);
+
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const scrollAmount = 200;
@@ -518,7 +532,7 @@ const getRelativeTime = (date: string | null) => {
 
             <div className="flex-1 bg-gray-50 pointer-events-none p-0 m-0">
               {/* Banner Header for Preview */}
-              <div className="relative w-full h-[250px] bg-dark flex flex-col justify-end">
+              <div className="relative w-full aspect-[21/9] bg-dark flex flex-col justify-end overflow-hidden">
                 {editingPost.image_url && (
                   <div className="absolute inset-0 z-0">
                     <img
@@ -549,15 +563,21 @@ const getRelativeTime = (date: string | null) => {
 
                   <div className="flex flex-wrap items-center justify-between gap-4 text-gray-500 text-sm font-medium mb-8 pb-5 border-b border-gray-100">
                     <div className="flex items-center gap-2">
-                       <span>Published {getRelativeTime(editingPost.created_at)}</span>
+                       <span>{getRelativeTime(editingPost.created_at)}</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-gray-50 px-2 py-1 rounded-full text-xs">
-                      <Eye size={12} />
-                      <span>{editingPost.views || 0} views</span>
+                    <div className="flex items-center gap-3">
+                      <button className="flex items-center gap-1.5 text-gray-400 hover:text-blue-600 transition-colors pointer-events-auto">
+                        <Share2 size={14} />
+                        <span>Share</span>
+                      </button>
+                      <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-full text-xs">
+                        <Eye size={12} />
+                        <span>{editingPost.views || 0} views</span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="prose max-w-none prose-p:my-4 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base">
+                  <div className="prose max-w-none prose-p:m-0 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base">
                     {(editingPost.images_data || []).map((block) => (
                       <div key={block.id} className="mb-8">
                         {block.type === 'text' && (
@@ -637,27 +657,31 @@ const getRelativeTime = (date: string | null) => {
 
       {/* Filters and Search */}
       <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm mb-8">
-        <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          <div className="relative flex-1 lg:max-w-md">
-            <input 
-              type="text" 
-              placeholder="Search posts..." 
+        <div className="flex flex-col lg:flex-row gap-4 justify-between lg:items-center">
+          <div className="flex items-center flex-1 lg:max-w-md bg-slate-50 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-200 focus-within:border-blue-500 border border-transparent transition-all">
+            <div className="pl-4 pr-2 flex items-center justify-center text-gray-400">
+              <Search size={18} />
+            </div>
+            <input
+              type="text"
+              placeholder="Search posts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-slate-50 border-transparent rounded-2xl text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all font-medium text-gray-700 placeholder-gray-400"
+              className="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 text-sm font-medium text-gray-700 placeholder-gray-400"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           </div>
-          
+
           <div className="flex flex-wrap items-center gap-3">
 
-            <div className="flex items-center gap-2 max-w-[300px] md:max-w-md">
+            <div className="flex items-center gap-2 flex-1 min-w-0 pr-4 overflow-hidden">
+              {showScrollArrows && (
               <button
                 onClick={() => scroll('left')}
                 className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
               >
                 <ChevronLeft size={18} />
               </button>
+              )}
 
               <div
                 ref={scrollContainerRef}
@@ -684,12 +708,14 @@ const getRelativeTime = (date: string | null) => {
                 ))}
               </div>
 
+              {showScrollArrows && (
               <button
                 onClick={() => scroll('right')}
                 className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
               >
                 <ChevronRight size={18} />
               </button>
+              )}
             </div>
 
 
@@ -773,17 +799,17 @@ const getRelativeTime = (date: string | null) => {
 
                 <div className="mt-auto pt-4 border-t border-gray-50 flex flex-col gap-3">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex-1 relative">
-                      <select 
-                        value={post.tableType || 'news'} 
-                        onChange={(e) => movePostType(post, e.target.value)}
-                        className="w-full appearance-none bg-gray-50 border border-gray-100 py-2 pl-3 pr-8 rounded-xl text-xs font-bold text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                      >
-                        <option value="news">Type: News Post</option>
-                        <option value="gallery">Type: Gallery Item</option>
-                      </select>
-                      <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
-                    </div>
+                    <div className="flex-1">
+                        <DropdownFilter
+                          value={post.tableType || 'news'}
+                          onChange={(val) => movePostType(post, val as 'news' | 'gallery')}
+                          options={[
+                            { value: 'news', label: 'Type: News Post' },
+                            { value: 'gallery', label: 'Type: Gallery Item' }
+                          ]}
+                          className="w-full"
+                        />
+                      </div>
                     
                   </div>
                   <div className="grid grid-cols-2 gap-2">
