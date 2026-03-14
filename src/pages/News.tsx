@@ -30,7 +30,7 @@ const DUMMY_GALLERY = [
 
 export default function News() {
   const [activeYear, setActiveYear] = useState('All');
-  const [gallerySort, setGallerySort] = useState('newest');
+  const [gallerySort, setGallerySort] = useState('latest');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [news, setNews] = useState<any[]>([]);
@@ -47,13 +47,23 @@ export default function News() {
         ]);
 
         if (newsRes.data && newsRes.data.length > 0) {
-          setNews(newsRes.data.map(n => ({
-            title: n.title,
-            date: new Date(n.created_at).toLocaleDateString(),
-            image: n.image_url,
-            desc: n.excerpt || n.content.substring(0, 100) + '...',
-            slug: n.slug
-          })));
+          setNews(newsRes.data.map(n => {
+            let text = n.content || '';
+            if (n.images_data && n.images_data.length > 0) {
+              const textBlock = n.images_data.find((b: any) => b.type === 'text');
+              if (textBlock && textBlock.content) text = textBlock.content;
+            }
+            const stripped = text.replace(/<[^>]+>/g, '').trim();
+            const fallbackDesc = stripped ? (stripped.length > 100 ? stripped.substring(0, 100) + '...' : stripped) : 'Click to read more...';
+            
+            return {
+              title: n.title,
+              date: new Date(n.created_at).toLocaleDateString(),
+              image: n.image_url,
+              desc: n.excerpt || fallbackDesc,
+              slug: n.slug
+            };
+          }));
         } else {
           setNews(DUMMY_NEWS);
         }
@@ -106,7 +116,7 @@ export default function News() {
       case 'most_popular':
         sorted.sort((a, b) => b.views - a.views);
         break;
-      case 'newest':
+      case 'latest':
       default:
         sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         break;
@@ -132,7 +142,7 @@ export default function News() {
             <input 
               type="text" 
               placeholder="Search news..." 
-              className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
             />
             <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
               <Search size={16} />
@@ -210,7 +220,7 @@ export default function News() {
                 <input 
                   type="text" 
                   placeholder="Search gallery..." 
-                  className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white"
+                  className="w-full pl-4 pr-10 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white"
                 />
                 <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
                   <Search size={16} />
@@ -220,9 +230,9 @@ export default function News() {
                 <select 
                   value={gallerySort}
                   onChange={(e) => setGallerySort(e.target.value)}
-                  className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-full text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white text-gray-700 font-medium"
+                  className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white text-gray-700 font-medium"
                 >
-                  <option value="newest">Newest</option>
+                  <option value="latest">latest</option>
                   <option value="oldest">Oldest</option>
                   <option value="last_updated">Last Updated</option>
                   <option value="most_popular">Most Popular</option>
@@ -232,7 +242,9 @@ export default function News() {
             </div>
           </div>
         </FadeIn>
-        
+
+        <hr className="border-gray-100 my-8 hidden md:block" />
+
         {loading ? (
           <div className="py-10 text-center text-gray-500">Loading gallery...</div>
         ) : (

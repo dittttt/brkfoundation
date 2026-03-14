@@ -111,25 +111,25 @@ export default function PostDetail({ type }: PostDetailProps) {
           </div>
         )}
 
-        {/* Banner Overlays (Like original) */}
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-28">
-          <div className="flex items-center gap-4">
-            <span className="text-secondary text-base font-bold uppercase tracking-widest">{yearStr}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-            <span className="text-white text-base uppercase tracking-widest font-bold">{type}</span>
+        {/* Banner Overlays */}
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-28 md:pb-32">
+          <div className="flex items-center gap-4 md:gap-6">
+            <span className="text-secondary text-base md:text-xl lg:text-2xl font-bold uppercase tracking-widest">{yearStr}</span>
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-secondary"></span>
+            <span className="text-white text-base md:text-xl lg:text-2xl uppercase tracking-widest font-bold">{type}</span>
           </div>
         </div>
       </div>
 
       <div className="w-full px-4 md:px-6 pt-0 -mt-16 md:-mt-20 relative z-20 pb-20">
         <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
-          
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-black text-gray-900 leading-tight mb-8">
+
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-8">
             {post.title}
           </h1>
 
           {/* Metadata: Date, Views, Last Updated */}
-          <div className="flex flex-wrap items-center justify-between gap-6 text-gray-500 text-sm font-medium mb-12 pb-6 border-b border-gray-100">
+          <div className="flex flex-wrap items-center justify-between gap-6 text-gray-500 text-sm md:text-base font-medium mb-12 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <span>Published {relativeTimeStr}</span>
@@ -148,11 +148,12 @@ export default function PostDetail({ type }: PostDetailProps) {
           </div>
 
           {/* Content */}
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed font-sans mb-16">
-            {type === 'news' && post.content && (
-              <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />
-            )}
+          <div className="prose prose-lg md:prose-xl prose-h1:text-2xl md:prose-h1:text-3xl max-w-none text-gray-700 leading-relaxed font-sans mb-16">
+              {type === 'news' && post.content && (!post.images_data || post.images_data.length === 0) && (
             
+            <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />
+            )}
+
             {type === 'news' ? (
               <div className="space-y-10">
                 {(post.images_data || []).map((block: any, idx: number) => (
