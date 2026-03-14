@@ -80,3 +80,23 @@ html {
   scrollbar-width: auto;
   scrollbar-color: #d1d5db #1A1A1A;
 }
+
+
+/* React Quill Customizations */
+.ql-toolbar.ql-snow {
+  border: 1px solid #e5e7eb !important;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  font-family: inherit !important;
+  background-color: #f8fafc;
+}
+.ql-container.ql-snow {
+  border: 1px solid #e5e7eb !important;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+}
+.ql-editor {
+  min-height: 150px;
+}
