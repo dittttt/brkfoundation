@@ -2,7 +2,7 @@
 import { supabase } from '../../lib/supabase';
 import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
-import 'react-quill/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NewsBlock {
@@ -415,10 +415,9 @@ export default function ManagePosts() {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-                
-                <div className="hidden">
+                </AnimatePresence>
               </div>
             </div>
           </div>
