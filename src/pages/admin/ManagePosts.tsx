@@ -568,7 +568,7 @@ export default function ManagePosts() {
                     </div>
                   </div>
 
-                  <div className="prose max-w-none prose-p:m-0 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base">
+                  <div className="prose max-w-none whitespace-pre-wrap prose-p:mb-4 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base">
                     {(editingPost.images_data || []).map((block) => (
                       <div key={block.id} className="mb-8">
                         {block.type === 'text' && (

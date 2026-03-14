@@ -158,11 +158,10 @@ export default function PostDetail({ type }: PostDetailProps) {
           </div>
 
           {/* Content */}
-          <div className="prose max-w-none prose-p:m-0 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base mb-16 font-sans">
+            <div className="prose max-w-none whitespace-pre-wrap prose-p:mb-4 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base mb-16 font-sans">
               {type === 'news' && post.content && (!post.images_data || post.images_data.length === 0) && (
-            
-            <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />
-            )}
+                <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />
+              )}
 
             {type === 'news' ? (
               <div className="space-y-10 leading-[1.5]">

@@ -174,7 +174,7 @@ export default function News() {
         </FadeIn>
         
         {/* Gallery Controls */}
-        <FadeIn delay={0.1} className="mb-0 md:mb-10 space-y-6">
+        <FadeIn delay={0.1} className="space-y-6">
           
           {/* Filters */}
           <div className="flex items-center gap-2 md:block w-full">
@@ -221,7 +221,7 @@ export default function News() {
           </div>
 
 
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-6 md:mt-0 mb-6 md:mb-0">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-6 md:mt-0 mb-6 md:mb-8 border-b border-gray-100 pb-4 gap-4">
             <div className="text-sm font-medium text-gray-500 w-full md:w-auto text-left">
               Total <span className="text-primary font-bold">{gallery.length}</span> items
             </div>
@@ -252,7 +252,6 @@ export default function News() {
           </div>
         </FadeIn>
 
-        <hr className="border-gray-100 mt-6 mb-6 hidden md:block" />
 
         {loading ? (
           <div className="py-10 text-center text-gray-500">Loading gallery...</div>
