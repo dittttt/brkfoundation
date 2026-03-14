@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section } from '../components/ui';
-import { ChevronLeft, ChevronRight, Clock, Eye } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Eye, Share2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface PostDetailProps {
