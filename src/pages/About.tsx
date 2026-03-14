@@ -15,12 +15,12 @@ export default function About() {
 
       {/* Intro Section - Split Layout */}
       <section className="relative bg-white overflow-hidden">
-        <div className="grid lg:grid-cols-2 min-h-[800px]">
+        <div className="grid lg:grid-cols-2 md:min-h-[600px]">
           {/* Left Content Side */}
-          <div className="relative z-10 flex items-center justify-center p-12 lg:p-24 order-2 lg:order-1">
+          <div className="relative z-10 flex items-center justify-center p-6 md:p-12 lg:p-16 order-2 lg:order-1">
             <div className="max-w-xl w-full">
               <FadeIn>
-                <div className="mb-12">
+                <div className="mb-8 md:mb-12">
                   <h2 className="text-6xl md:text-7xl font-display font-black text-dark mb-8 leading-[0.9] tracking-tighter">
                     A WORLD WE CAN<br />
                     <span className="text-primary">BUILD TOGETHER</span>
@@ -43,7 +43,7 @@ export default function About() {
           </div>
 
           {/* Right Profile Side */}
-          <div className="relative bg-gray-50 p-12 lg:p-24 flex flex-col justify-center gap-8 order-1 lg:order-2">
+          <div className="relative bg-gray-50 p-6 md:p-12 lg:p-16 flex flex-col justify-center gap-6 md:gap-8 order-1 lg:order-2">
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
             
             {/* Bruce Kim Profile */}
@@ -70,7 +70,7 @@ export default function About() {
       {/* Vision & Mission Section */}
       <Section bg="secondary" className="relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12 md:mb-20">
             <FadeIn>
               <h2 className="text-5xl md:text-6xl font-black text-dark uppercase tracking-tight mb-6">Our Purpose</h2>
               <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
@@ -116,15 +116,15 @@ export default function About() {
       </Section>
 
       {/* Core Values Section */}
-      <Section bg="white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-16">
+      <Section bg="white" className="py-12 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <FadeIn className="mb-12 md:mb-16">
             <h2 className="text-5xl font-black text-dark uppercase tracking-tight mb-4">Core Values</h2>
             <div className="w-20 h-2 bg-primary rounded-full mb-6"></div>
             <p className="text-xl text-gray-500 font-medium max-w-2xl">
               The fundamental beliefs that shape our culture and impact.
             </p>
-          </div>
+          </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             {[

@@ -19,8 +19,8 @@ export interface TimelineBlockProps {
 export const TimelineBlock: React.FC<TimelineBlockProps> = ({ year, image, title, events, isEven }) => {
   const blockRef = useRef(null);
 
-  // Use a very tight margin (2% trigger zone in exact middle) so only one section locks in at a time
-  const isInView = useInView(blockRef, { margin: "-49% 0px -49% 0px" });
+  // Trigger exactly when reaching middle of screen, but stay locked in as user scrolls down!
+  const isInView = useInView(blockRef, { margin: "1000px 0px -50% 0px" });
 
   return (
     <div ref={blockRef} className={`relative flex flex-col md:flex-row items-stretch gap-10 md:gap-0 ${isEven ? 'md:flex-row-reverse' : ''} pt-8 md:pt-0`}>

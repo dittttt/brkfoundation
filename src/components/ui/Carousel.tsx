@@ -95,41 +95,61 @@ export const Carousel = ({
       {/* Arrows */}
       {showArrows && (
         <>
-          <button 
+          <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-md text-white hover:bg-white/60 transition-all"
+            className="hidden md:block absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white/40 backdrop-blur-md text-white hover:bg-white/60 transition-all"
           >
-            <ChevronLeft size={28} />
+            <ChevronLeft className="w-5 h-5 md:w-7 md:h-7" />
           </button>
-          <button 
+          <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-md text-white hover:bg-white/60 transition-all"
+            className="hidden md:block absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white/40 backdrop-blur-md text-white hover:bg-white/60 transition-all"
           >
-            <ChevronRight size={28} />
+            <ChevronRight className="w-5 h-5 md:w-7 md:h-7" />
           </button>
         </>
       )}
+      {/* Indicators and Mobile Arrows */}
+      {(showIndicators || showArrows) && (
+        <div className="absolute flex bottom-[230px] md:bottom-[200px] left-1/2 -translate-x-1/2 z-[60] gap-2 md:gap-3 items-center pointer-events-auto">
+          {showArrows && (
+            <button
+              onClick={prevSlide}
+              className="md:hidden p-1.5 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/40 transition-all mr-1"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          )}
 
-      {/* Indicators */}
-      {showIndicators && (
-        <div className="absolute bottom-[160px] md:bottom-[200px] left-1/2 -translate-x-1/2 z-[60] flex gap-3 items-center pointer-events-auto">
-          {slides.map((_, idx) => (
+          {showIndicators && slides.map((_, idx) => (
             <button
               key={idx}
               onClick={() => handleIndicatorClick(idx)}
               className={clsx(
                 "h-1.5 transition-all duration-300 rounded-full",
-                idx === currentIndex ? "bg-white w-12" : "bg-white/30 w-8 hover:bg-white/50"
+                idx === currentIndex ? "bg-white w-8 md:w-12" : "bg-white/30 w-4 md:w-8 hover:bg-white/50"
               )}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
-          <div className="ml-4 pl-3 border-l border-white/30 flex items-center gap-1 text-white/60 text-xs font-bold">
-            <svg className="w-4 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m0 0l-7-7m7 7l7-7" />
-            </svg>
-            <span>Scroll</span>
-          </div>
+
+          {showArrows && (
+            <button
+              onClick={nextSlide}
+              className="md:hidden p-1.5 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/40 transition-all ml-1"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+
+          {showIndicators && (
+            <div className="ml-2 md:ml-4 pl-2 md:pl-3 border-l border-white/30 flex items-center gap-1 text-white/60 text-xs font-bold">
+              <svg className="w-4 h-5 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m0 0l-7-7m7 7l7-7" />
+              </svg>
+              <span>Scroll</span>
+            </div>
+          )}
         </div>
       )}
     </div>

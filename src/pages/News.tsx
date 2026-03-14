@@ -120,13 +120,13 @@ export default function News() {
 
       {/* Gallery Section */}
       <Section bg="secondary">
-        <div className="text-center mb-12">
+        <FadeIn className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-display font-black text-dark uppercase tracking-tight">Gallery</h2>
           <p className="text-gray-600 text-lg mt-4 font-medium max-w-2xl mx-auto">Be the reason for someone's happiness</p>
-        </div>
+        </FadeIn>
         
         {/* Gallery Controls */}
-        <div className="mb-0 md:mb-10 space-y-6">
+        <FadeIn delay={0.1} className="mb-0 md:mb-10 space-y-6">
           {/* Filters */}
           <div className="flex items-center gap-2 md:block">
             {/* Mobile Left Arrow */}
@@ -187,7 +187,7 @@ export default function News() {
               </button>
             </div>
           </div>
-        </div>
+        </FadeIn>
         
         {/* Gallery Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">

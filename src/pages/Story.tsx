@@ -87,7 +87,7 @@ export default function Story() {
 
         <div className="max-w-5xl mx-auto relative z-10">
             {/* Intro Text */}
-            <div className="text-center mb-24 max-w-3xl mx-auto">
+            <div className="text-center mb-12 md:mb-24 max-w-3xl mx-auto">
                 <FadeIn>
                     <h2 className="text-3xl md:text-4xl font-display font-black text-gray-900 mb-6">
                         A History of <span className="text-primary">Helping Hands</span>
@@ -126,7 +126,7 @@ export default function Story() {
             {/* Future / CTA */}
             <div className="mt-16 text-center">
                 <FadeIn delay={0.1} viewport={{ once: true, margin: "0px" }}>
-                    <div className="bg-dark text-white rounded-3xl p-12 relative overflow-hidden">
+                    <div className="bg-dark text-white rounded-3xl p-8 md:p-12 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
                         

@@ -1,6 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import clsx from 'clsx';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export * from './ActivitySlider';
 export * from './Carousel';
@@ -25,7 +30,7 @@ export const Section = ({
   };
 
   return (
-    <section id={id} className={clsx("py-12 md:py-20 px-6", bgColors[bg], className)}>
+    <section id={id} className={cn("py-12 md:py-20 px-4 md:px-6", bgColors[bg], className)}>
       <div className="max-w-7xl mx-auto">
         {children}
       </div>
@@ -36,10 +41,10 @@ export const Section = ({
 export const FadeIn: React.FC<{ children: React.ReactNode; delay?: number; className?: string; viewport?: any }> = ({ children, delay = 0, className, viewport }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={viewport || { once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      viewport={viewport || { once: true, margin: "0px 0px 0px 0px" }}
+      transition={{ duration: 0.8, delay, ease: "easeOut" }}
       className={className}
     >
       {children}
@@ -89,7 +94,7 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
   return (
     <input
       ref={ref}
-      className={clsx(
+      className={cn(
         "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-colors",
         className
       )}
@@ -103,7 +108,7 @@ export const TextArea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTML
   return (
     <textarea
       ref={ref}
-      className={clsx(
+      className={cn(
         "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none resize-none transition-colors",
         className
       )}
@@ -117,7 +122,7 @@ export const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttrib
   return (
     <button
       ref={ref}
-      className={clsx(
+      className={cn(
         "w-full bg-primary text-white font-medium py-4 rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20",
         className
       )}

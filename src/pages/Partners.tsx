@@ -32,7 +32,7 @@ export default function Partners() {
       </Section>
 
       {/* CTA Section */}
-      <Section className="bg-gray-50 text-center py-24">
+      <Section className="bg-gray-50 text-center py-12 md:py-20">
         <FadeIn>
           <h2 className="text-4xl md:text-5xl font-display font-black uppercase tracking-tight mb-6 text-dark">
             Become a Partner

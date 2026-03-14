@@ -5,7 +5,7 @@ import { Section, FadeIn } from '../ui';
 
 export const IntroSection = () => {
   return (
-    <Section className="relative overflow-hidden py-32 bg-white">
+    <Section className="relative overflow-hidden pt-8 md:pt-16 pb-12 md:pb-20 bg-white">
       <div className="grid md:grid-cols-2 gap-16 items-center max-w-screen-2xl mx-auto">
         {/* Image Side */}
         <FadeIn delay={0.1} className="relative">

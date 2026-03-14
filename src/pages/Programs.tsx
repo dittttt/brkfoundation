@@ -19,7 +19,7 @@ export default function Programs() {
       />
 
       {/* Intro Section */}
-      <Section className="py-24 md:py-32 bg-white">
+      <Section className="py-12 md:py-20 bg-white">
         <div className="max-w-4xl mx-auto text-center px-6">
           <FadeIn>
             <div className="inline-flex items-center justify-center p-3 bg-primary/5 rounded-full mb-8">
@@ -39,9 +39,9 @@ export default function Programs() {
 
       {/* Nutrition Support Project - Split Layout */}
       <section className="relative bg-gray-50 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[800px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 md:min-h-[600px]">
           {/* Left Content Side */}
-          <div className="relative z-10 flex items-center justify-center p-12 lg:p-24 order-2 lg:order-1">
+          <div className="relative z-10 flex items-center justify-center p-6 md:p-12 lg:p-16 order-2 lg:order-1">
             <div className="max-w-xl w-full">
               <FadeIn>
                 <div className="mb-12">
@@ -104,7 +104,7 @@ export default function Programs() {
           </div>
 
           {/* Right Image Side */}
-          <div className="relative h-full min-h-[600px] lg:h-auto order-1 lg:order-2 p-4 lg:p-12 flex items-center justify-center">
+          <div className="relative h-full md:min-h-[600px] lg:h-auto order-1 lg:order-2 p-4 lg:p-12 flex items-center justify-center">
             <div className="grid grid-cols-2 gap-4 w-full max-w-lg mx-auto">
               <div className="relative aspect-[4/5] rounded-3xl overflow-hidden group">
                 <img 
@@ -148,14 +148,14 @@ export default function Programs() {
       </section>
 
       {/* Feeding Activities Slider */}
-      <section className="py-32 bg-white overflow-hidden">
-        <div className="text-center mb-20 px-6">
+      <section className="py-12 md:py-20 bg-white overflow-hidden">
+        <FadeIn className="text-center mb-8 md:mb-12 px-4 md:px-6">
           <h2 className="text-4xl md:text-5xl font-black text-dark uppercase tracking-tight">Recent Feeding Activities</h2>
           <div className="w-24 h-1 bg-primary mx-auto mt-6 rounded-full"></div>
-        </div>
-        <div className="w-full">
+        </FadeIn>
+        <FadeIn delay={0.2} className="w-full">
           <ActivitySlider activities={FEEDING_ACTIVITIES} />
-        </div>
+        </FadeIn>
       </section>
     </MainLayout>
   );
