@@ -134,7 +134,11 @@ export default function News() {
 
       {/* News Section */}
       <Section bg="white">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 border-b border-gray-100 pb-4 gap-4">
+        <FadeIn className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-display font-black text-dark uppercase tracking-tight">News / Announcements</h2>
+          <p className="text-gray-600 text-lg mt-4 font-medium max-w-2xl mx-auto">Stay updated with our latest activities</p>
+        </FadeIn>
+<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 border-b border-gray-100 pb-4 gap-4">
           <div className="text-sm font-medium text-gray-500 w-full md:w-auto text-left">
             Total <span className="text-primary font-bold">{news.length}</span> items
           </div>
@@ -153,7 +157,7 @@ export default function News() {
         {loading ? (
           <div className="py-10 text-center text-gray-500">Loading news...</div>
         ) : (
-<> <h3 className="text-xl md:text-2xl font-bold text-dark mb-6">News / Announcements</h3>
+<>
             <div className="grid md:grid-cols-3 gap-10">
             {news.map((item, idx) => (
               <NewsCard key={idx} item={item} delay={idx * 0.1} />
@@ -171,46 +175,15 @@ export default function News() {
         
         {/* Gallery Controls */}
         <FadeIn delay={0.1} className="mb-0 md:mb-10 space-y-6">
-          <div className="flex items-center gap-2 md:block">
-            <button 
-              onClick={() => scroll('left')}
-              className="md:hidden shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50"
-            >
-              <ChevronLeft size={18} />
-            </button>
-
-            <div 
-              ref={scrollContainerRef}
-              className="flex-1 overflow-x-auto flex gap-2 md:flex-wrap md:justify-start py-2 scroll-smooth snap-x min-w-0"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              <style>{`
-                div::-webkit-scrollbar {
-                  display: none;
-                }
-              `}</style>
-              {years.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => setActiveYear(year)}
-                  className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap snap-start shrink-0 ${
-                    activeYear === year 
-                      ? 'bg-primary text-white shadow-md transform scale-[1.02] border border-primary' 
-                      : 'bg-white text-dark border border-dark hover:bg-gray-50'
-                  }`}
-                >
-                  {year}
-                </button>
-              ))}
+          
+            <div className="relative min-w-[140px] md:w-48 shrink-0">
+              <DropdownFilter
+                value={activeYear}
+                onChange={setActiveYear}
+                options={years.map(y => ({ value: y, label: y === 'All' ? 'All Years' : y }))}
+              />
             </div>
 
-            <button 
-              onClick={() => scroll('right')}
-              className="md:hidden shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50"
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-6 md:mt-0 mb-6 md:mb-0">
             <div className="text-sm font-medium text-gray-500 w-full md:w-auto text-left">

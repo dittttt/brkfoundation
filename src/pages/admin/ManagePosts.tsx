@@ -377,12 +377,12 @@ const getRelativeTime = (date: string | null) => {
                           setEditingPost({ ...editingPost, created_at: new Date(e.target.value).toISOString() });
                         }
                       }}
-                      className="border-gray-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm px-3 py-2"
+                      className="w-full text-sm font-semibold text-gray-900 border-2 border-gray-200 focus:border-gray-300 focus:ring-0 focus:outline-none rounded-xl px-4 py-3 transition-all bg-white"
                     />
                   </div>
                   <div className="flex-1 flex flex-col gap-1">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Modified / Updated On</label>
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg text-sm px-3 py-2 text-gray-500 font-medium">
+                    <div className="w-full text-sm font-semibold text-gray-500 border-2 border-gray-200 rounded-xl px-4 py-3 transition-all bg-gray-50">
                       {editingPost.id ? 'Auto-updated on save' : 'Not saved yet'}
                     </div>
                   </div>
@@ -518,7 +518,7 @@ const getRelativeTime = (date: string | null) => {
                   </div>
                 )}
 
-                <div className="relative z-10 w-full px-6 pb-20">
+                <div className="relative z-10 w-full px-10 md:px-12 pb-20">
                   <div className="flex items-center gap-3">
                     <span className="text-secondary text-xs font-bold uppercase tracking-widest">
                       {editingPost.created_at ? new Date(editingPost.created_at).getFullYear() : '2026'}
@@ -545,7 +545,7 @@ const getRelativeTime = (date: string | null) => {
                     </div>
                   </div>
 
-                  <div className="prose max-w-none text-gray-700 leading-[1.5] text-sm">
+                  <div className="prose max-w-none prose-p:my-4 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base">
                     {(editingPost.images_data || []).map((block) => (
                       <div key={block.id} className="mb-8">
                         {block.type === 'text' && (
@@ -638,9 +638,15 @@ const getRelativeTime = (date: string | null) => {
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
-            <select value={filterYear} onChange={e => setFilterYear(e.target.value)} className="bg-slate-50 border-transparent py-3 px-4 rounded-2xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-blue-200 outline-none appearance-none pr-10 cursor-pointer relative">
-              {years.map(y => <option key={y} value={y}>{y === 'All' ? 'All Years' : y}</option>)}
-            </select>
+            
+            <div className="relative min-w-[140px] shrink-0 z-50">
+              <DropdownFilter
+                value={filterYear}
+                onChange={setFilterYear}
+                options={years.map(y => ({ value: y, label: y === 'All' ? 'All Years' : y }))}
+              />
+            </div>
+
             
             <div className="flex bg-slate-50 p-1.5 rounded-2xl">
               {['ALL', 'News', 'Gallery'].map(t => (
@@ -654,12 +660,20 @@ const getRelativeTime = (date: string | null) => {
               ))}
             </div>
 
-            <select value={sortBy} onChange={e => setSortBy(e.target.value)} className="bg-slate-50 border-transparent py-3 px-4 rounded-2xl text-sm font-bold text-gray-700 focus:ring-2 focus:ring-blue-200 outline-none appearance-none pr-10 cursor-pointer">
-              <option value="latest">Latest</option>
-              <option value="oldest">Oldest</option>
-              <option value="updated">Most Updated</option>
-              <option value="views">Most Views</option>
-            </select>
+            
+            <div className="relative min-w-[140px] shrink-0 z-50">
+              <DropdownFilter
+                value={sortBy}
+                onChange={setSortBy}
+                options={[
+                  { value: 'latest', label: 'Latest' },
+                  { value: 'oldest', label: 'Oldest' },
+                  { value: 'views', label: 'Most Views' },
+                  { value: 'updated', label: 'Recently Updated' }
+                ]}
+              />
+            </div>
+
           </div>
         </div>
       </div>

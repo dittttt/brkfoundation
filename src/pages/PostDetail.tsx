@@ -51,7 +51,7 @@ export default function PostDetail({ type }: PostDetailProps) {
     return (
       <MainLayout>
         <Section bg="white">
-          <div className="max-w-4xl mx-auto py-20 text-center text-gray-500">
+          <div className="max-w-5xl mx-auto py-20 text-center text-gray-500">
             Loading...
           </div>
         </Section>
@@ -63,7 +63,7 @@ export default function PostDetail({ type }: PostDetailProps) {
     return (
       <MainLayout>
         <Section bg="white">
-          <div className="max-w-4xl mx-auto py-20 text-center">
+          <div className="max-w-5xl mx-auto py-20 text-center">
             <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
             <Link to="/updates" className="text-primary hover:underline">
               Return to updates
@@ -112,7 +112,7 @@ export default function PostDetail({ type }: PostDetailProps) {
         )}
 
         {/* Banner Overlays */}
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-28 md:pb-32">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pb-28 md:pb-32">
           <div className="flex items-center gap-4 md:gap-6">
             <span className="text-secondary text-sm md:text-base font-bold uppercase tracking-widest">{yearStr}</span>
             <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-secondary"></span>
@@ -122,7 +122,7 @@ export default function PostDetail({ type }: PostDetailProps) {
       </div>
 
       <div className="w-full px-4 md:px-6 pt-0 -mt-16 md:-mt-20 relative z-20 pb-20">
-        <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
+        <div className="max-w-5xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
 
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-4">
             {post.title}
@@ -148,7 +148,7 @@ export default function PostDetail({ type }: PostDetailProps) {
           </div>
 
           {/* Content */}
-          <div className="prose prose-lg md:prose-xl prose-h1:text-2xl md:prose-h1:text-3xl max-w-none text-gray-700 leading-[1.5] font-sans mb-16">
+          <div className="prose prose-lg md:prose-xl prose-p:my-4 prose-a:text-blue-600 prose-h1:text-2xl md:prose-h1:text-3xl max-w-none text-gray-700 leading-[1.5] font-sans mb-16">
               {type === 'news' && post.content && (!post.images_data || post.images_data.length === 0) && (
             
             <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />
