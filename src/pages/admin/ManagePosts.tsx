@@ -663,8 +663,8 @@ const getRelativeTime = (date: string | null) => {
 
       {/* Filters and Search */}
       <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm mb-8">
-        <div className="flex flex-col lg:flex-row gap-4 justify-between lg:items-center">
-          <div className="flex items-center flex-1 lg:max-w-md bg-slate-50 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-200 focus-within:border-blue-500 border border-transparent transition-all">
+        <div className="flex flex-col lg:flex-row gap-4 lg:items-center w-full">
+          <div className="flex items-center w-full lg:w-[300px] shrink-0 bg-slate-50 rounded-2xl overflow-hidden border border-transparent transition-all">
             <div className="pl-4 pr-2 flex items-center justify-center text-gray-400">
               <Search size={18} />
             </div>
@@ -673,7 +673,7 @@ const getRelativeTime = (date: string | null) => {
               placeholder="Search posts..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 text-sm font-medium text-gray-700 placeholder-gray-400"
+              className="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium text-gray-700 placeholder-gray-400"
             />
           </div>
 
@@ -738,15 +738,15 @@ const getRelativeTime = (date: string | null) => {
             </div>
 
             
-            <div className="relative min-w-[140px] shrink-0 z-50">
+            <div className="relative w-[150px] shrink-0 z-50">
               <DropdownFilter
                 value={sortBy}
                 onChange={setSortBy}
                 options={[
                   { value: 'latest', label: 'Latest' },
                   { value: 'oldest', label: 'Oldest' },
-                  { value: 'views', label: 'Most Views' },
-                  { value: 'updated', label: 'Recently Updated' }
+                  { value: 'updated', label: 'Last updated' },
+                  { value: 'views', label: 'Most Popular' }
                 ]}
               />
             </div>
@@ -814,6 +814,7 @@ const getRelativeTime = (date: string | null) => {
                             { value: 'gallery', label: 'Type: Gallery Item' }
                           ]}
                           className="w-full"
+                          buttonClassName="py-2 px-3 text-xs bg-gray-50 border border-gray-100 font-bold"
                         />
                       </div>
                     

@@ -98,8 +98,15 @@ export default function PostDetail({ type }: PostDetailProps) {
 
   return (
     <MainLayout>
+      <div className="bg-dark pt-24 pb-4 px-4 md:px-6">
+        <div className="max-w-5xl mx-auto">
+          <Link to="/updates" className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors font-medium text-sm">
+            <ChevronLeft size={16} /> Back to Updates
+          </Link>
+        </div>
+      </div>
       {/* Banner Header instead of inline image */}
-      <div className="relative w-full aspect-[21/9] max-h-[600px] bg-dark flex flex-col justify-end overflow-hidden">
+      <div className="relative w-full aspect-[21/9] bg-dark flex flex-col justify-end overflow-hidden">
         {post.image_url && (
           <div className="absolute inset-0 z-0">
             <img
@@ -124,7 +131,7 @@ export default function PostDetail({ type }: PostDetailProps) {
       <div className="w-full px-4 md:px-6 pt-0 -mt-12 relative z-20 pb-20">
         <div className="max-w-5xl mx-auto bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
 
-          <h1 className="text-2xl md:text-3xl font-display font-black text-gray-900 leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-6">
             {post.title}
           </h1>
 
@@ -143,11 +150,19 @@ export default function PostDetail({ type }: PostDetailProps) {
             </div>
             <div className="flex items-center gap-4">
               <button 
-                onClick={() => navigator.clipboard.writeText(window.location.href)}
-                className="flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-medium text-sm md:text-base"
+                onClick={(e) => {
+                  navigator.clipboard.writeText(window.location.href);
+                  const span = e.currentTarget.querySelector('span');
+                  if (span) {
+                    const orig = span.innerText;
+                    span.innerText = 'Copied!';
+                    setTimeout(() => span.innerText = orig, 2000);
+                  }
+                }}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors font-bold text-sm md:text-base rounded-xl border border-gray-200 shadow-sm active:scale-95"
               >
-                <Share2 size={16} />
-                <span>Share</span>
+                <Share2 size={18} />
+                <span>Share Post</span>
               </button>
               <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full">
                 <Eye size={16} />

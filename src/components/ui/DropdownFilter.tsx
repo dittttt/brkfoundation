@@ -13,9 +13,10 @@ interface DropdownFilterProps {
   onChange: (value: string) => void;
   options: Option[];
   className?: string;
+  buttonClassName?: string;
 }
 
-export function DropdownFilter({ value, onChange, options, className }: DropdownFilterProps) {
+export function DropdownFilter({ value, onChange, options, className, buttonClassName }: DropdownFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -36,10 +37,13 @@ export function DropdownFilter({ value, onChange, options, className }: Dropdown
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium hover:border-primary/50 transition-colors bg-white text-gray-700 w-full justify-between"
+        className={cn(
+          "flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium hover:border-primary/50 transition-colors bg-white text-gray-700 w-full justify-between",
+          buttonClassName
+        )}
       >
         {selectedOption?.label}
-        <ChevronDown size={16} className={cn('text-gray-400 transition-transform duration-200', isOpen && 'rotate-180')} />
+        <ChevronDown size={16} className={cn('text-gray-400 transition-transform duration-200 shrink-0', isOpen && 'rotate-180')} />
       </button>
 
       <AnimatePresence>
@@ -49,9 +53,9 @@ export function DropdownFilter({ value, onChange, options, className }: Dropdown
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-2 w-48 z-50 origin-top-right"
+            className="absolute left-0 right-0 top-full mt-2 w-full z-50 origin-top"
           >
-            <div className="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2">
+            <div className="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 w-full">
               {options.map((option) => (
                 <button
                   key={option.value}
@@ -75,4 +79,5 @@ export function DropdownFilter({ value, onChange, options, className }: Dropdown
     </div>
   );
 }
-
+
+
