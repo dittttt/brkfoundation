@@ -262,9 +262,10 @@ export default function ManagePosts() {
     setEditingPost({ ...editingPost, images_data: blocks });
   };
 
+  
+  
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
-    // Needed for Firefox
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData('text/plain', index.toString());
@@ -273,31 +274,31 @@ export default function ManagePosts() {
 
   const handleDragEnter = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault();
-    if (draggedIndex === null || draggedIndex === targetIndex) return;
-
-    if (!editingPost) return;
-    const newBlocks = [...(editingPost.images_data || [])];
-    const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
-    newBlocks.splice(targetIndex, 0, draggedBlock);
-    
-    setEditingPost({ ...editingPost, images_data: newBlocks });
-    setDraggedIndex(targetIndex);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault(); // Necessary to allow dropping
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) {
+        setDraggedIndex(null);
+        return;
+    }
+    if (!editingPost) return;
+    const newBlocks = [...(editingPost.images_data || [])];
+    const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
+    newBlocks.splice(targetIndex, 0, draggedBlock);
+
+    setEditingPost({ ...editingPost, images_data: newBlocks });
     setDraggedIndex(null);
   };
 
   const handleDragEnd = () => {
     setDraggedIndex(null);
   };
-
-  const getRelativeTime = (date: string | null) => {
+const getRelativeTime = (date: string | null) => {
     if (!date) return 'Recently';
     const now = new Date();
     const past = new Date(date);
@@ -423,7 +424,6 @@ export default function ManagePosts() {
                 <AnimatePresence>
                   {(editingPost.images_data || []).map((block, index) => (
                     <motion.div
-                         layout
                          initial={{ opacity: 0, y: 20 }}
                          animate={{ opacity: 1, y: 0 }}
                          exit={{ opacity: 0, height: 0, overflow: 'hidden', margin: 0, padding: 0 }}
@@ -431,7 +431,7 @@ export default function ManagePosts() {
                          key={block.id}
                          onDragEnter={(e) => handleDragEnter(e, index)}
                          onDragOver={handleDragOver}
-                         onDrop={handleDrop}
+                         onDrop={(e) => handleDrop(e, index)}
                          className={`relative bg-white border border-gray-200 rounded-xl p-5 shadow-sm transition-all mb-6 w-full ${draggedIndex === index ? 'opacity-50 scale-95 border-blue-400 border-dashed' : 'hover:border-blue-300 hover:shadow-md'}`}>
 
                       <div className="w-full">
@@ -545,7 +545,7 @@ export default function ManagePosts() {
                     </div>
                   </div>
 
-                  <div className="prose max-w-none text-gray-700 leading-relaxed text-sm">
+                  <div className="prose max-w-none text-gray-700 leading-[1.5] text-sm">
                     {(editingPost.images_data || []).map((block) => (
                       <div key={block.id} className="mb-8">
                         {block.type === 'text' && (
@@ -725,15 +725,7 @@ export default function ManagePosts() {
                       </select>
                       <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
                     </div>
-                    {post.tableType === 'news' && (
-                      <button 
-                        title="Toggle Featured on homepage"
-                        onClick={() => toggleFeaturedNews(post, !!post.is_featured_news)} 
-                        className={`p-2 rounded-xl border transition-all ${post.is_featured_news ? 'bg-amber-50 border-amber-200 text-amber-500' : 'bg-gray-50 border-gray-100 text-gray-400 hover:text-amber-500 hover:bg-amber-50'}`}
-                      >
-                        <Star className="w-4 h-4" />
-                      </button>
-                    )}
+                    
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <button onClick={() => setEditingPost(post)} className="flex items-center justify-center p-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">

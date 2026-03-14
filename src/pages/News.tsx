@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
-import { Section, PageHeader, FadeIn } from '../components/ui';
+import { Section, PageHeader, FadeIn, DropdownFilter } from '../components/ui';
 import { Search, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { NewsCard } from '../components/shared/NewsCard';
 import { GalleryCard } from '../components/shared/GalleryCard';
@@ -153,11 +153,12 @@ export default function News() {
         {loading ? (
           <div className="py-10 text-center text-gray-500">Loading news...</div>
         ) : (
-          <div className="grid md:grid-cols-3 gap-10">
+<> <h3 className="text-xl md:text-2xl font-bold text-dark mb-6">News / Announcements</h3>
+            <div className="grid md:grid-cols-3 gap-10">
             {news.map((item, idx) => (
               <NewsCard key={idx} item={item} delay={idx * 0.1} />
             ))}
-          </div>
+          </div> </>
         )}
       </Section>
 
@@ -226,24 +227,23 @@ export default function News() {
                   <Search size={16} />
                 </button>
               </div>
-              <div className="relative shrink-0">
-                <select 
+              <div className="relative min-w-[140px] md:w-48 shrink-0">
+                <DropdownFilter
                   value={gallerySort}
-                  onChange={(e) => setGallerySort(e.target.value)}
-                  className="appearance-none pl-4 pr-10 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all bg-white text-gray-700 font-medium"
-                >
-                  <option value="latest">latest</option>
-                  <option value="oldest">Oldest</option>
-                  <option value="last_updated">Last Updated</option>
-                  <option value="most_popular">Most Popular</option>
-                </select>
-                <Filter className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                  onChange={setGallerySort}
+                  options={[
+                    { value: 'latest', label: 'Latest' },
+                    { value: 'oldest', label: 'Oldest' },
+                    { value: 'last_updated', label: 'Last Updated' },
+                    { value: 'most_popular', label: 'Most Popular' }
+                  ]}
+                />
               </div>
             </div>
           </div>
         </FadeIn>
 
-        <hr className="border-gray-100 my-8 hidden md:block" />
+        <hr className="border-gray-100 mt-6 mb-6 hidden md:block" />
 
         {loading ? (
           <div className="py-10 text-center text-gray-500">Loading gallery...</div>
