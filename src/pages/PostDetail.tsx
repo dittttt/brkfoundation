@@ -121,7 +121,7 @@ export default function PostDetail({ type }: PostDetailProps) {
         </div>
       </div>
 
-      <Section bg="transparent" className="pt-0 -mt-16 md:-mt-20 relative z-20 pb-20">
+      <div className="w-full px-4 md:px-6 pt-0 -mt-16 md:-mt-20 relative z-20 pb-20">
         <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
           
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-black text-gray-900 leading-tight mb-8">
@@ -249,7 +249,7 @@ export default function PostDetail({ type }: PostDetailProps) {
             </div>
           </div>
         </div>
-      </Section>
+      </div>
     </MainLayout>
   );
 }
