@@ -153,8 +153,8 @@ export default function ManagePosts() {
   const handleImageUpload = async (file: File) => {
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = \\.\\;
-      const filePath = \\\;
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
       
       const { error: uploadError } = await supabase.storage
         .from('images')
@@ -429,7 +429,7 @@ export default function ManagePosts() {
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {posts.map((post) => (
-          <div key={post.id} className={g-white rounded-2xl shadow-sm border  overflow-hidden hover:shadow-md transition-shadow group}>
+          <div key={post.id} className="bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow group">
             <div className="flex flex-col sm:flex-row h-full">
               <div className="sm:w-48 h-48 sm:h-auto relative shrink-0 bg-slate-100">
                 {post.image_url ? (
@@ -464,8 +464,8 @@ export default function ManagePosts() {
                 </h3>
                 
                 <div className="flex justify-between items-center pt-4 border-t border-gray-50 mt-auto">
-                  <button onClick={() => toggleFeaturedNews(post, !!post.is_featured_news)} className={lex items-center px-3 py-1.5 text-xs font-bold rounded-full transition-colors cursor-pointer }>
-                    <Star className={w-3.5 h-3.5 mr-1.5 } />
+                  <button onClick={() => toggleFeaturedNews(post, !!post.is_featured_news)} className="flex items-center px-3 py-1.5 text-xs font-bold rounded-full transition-colors cursor-pointer">
+                    <Star className="w-3.5 h-3.5 mr-1.5" />
                     {post.is_featured_news ? 'Featured in News' : 'Make Featured'}
                   </button>
                   <div className="flex items-center gap-2">
