@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { DropdownFilter } from '../../components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface NewsBlock {
@@ -36,6 +37,17 @@ const QUILL_MODULES = {
 };
 
 export default function ManagePosts() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 200;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const [posts, setPosts] = useState<NewsPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingPost, setEditingPost] = useState<NewsPost | null>(null);
@@ -638,16 +650,49 @@ const getRelativeTime = (date: string | null) => {
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
-            
-            <div className="relative min-w-[140px] shrink-0 z-50">
-              <DropdownFilter
-                value={filterYear}
-                onChange={setFilterYear}
-                options={years.map(y => ({ value: y, label: y === 'All' ? 'All Years' : y }))}
-              />
+
+            <div className="flex items-center gap-2 max-w-[300px] md:max-w-md">
+              <button
+                onClick={() => scroll('left')}
+                className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
+              >
+                <ChevronLeft size={18} />
+              </button>
+
+              <div
+                ref={scrollContainerRef}
+                className="flex-1 overflow-x-auto flex gap-2 py-2 scroll-smooth snap-x min-w-0"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                <style>{`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
+                {years.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => setFilterYear(year)}
+                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap snap-start shrink-0 ${
+                      filterYear === year
+                        ? 'bg-blue-600 text-white shadow-md border border-blue-600'
+                        : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    {year === 'All' ? 'All Years' : year}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => scroll('right')}
+                className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
+              >
+                <ChevronRight size={18} />
+              </button>
             </div>
 
-            
+
             <div className="flex bg-slate-50 p-1.5 rounded-2xl">
               {['ALL', 'News', 'Gallery'].map(t => (
                 <button
