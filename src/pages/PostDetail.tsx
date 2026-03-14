@@ -100,7 +100,7 @@ export default function PostDetail({ type }: PostDetailProps) {
     <MainLayout>
       {/* Banner Header instead of inline image */}
       <div className="w-full bg-gray-50 pt-20">
-        <div className="relative w-full max-w-[1400px] mx-auto min-h-[300px] max-h-[450px] aspect-[21/9] bg-dark flex flex-col justify-end overflow-hidden lg:rounded-b-[3rem]">
+        <div className="relative w-full aspect-[21/9] bg-dark flex flex-col justify-end overflow-hidden">
         {post.image_url && (
           <div className="absolute inset-0 z-0">
             <img
@@ -122,7 +122,7 @@ export default function PostDetail({ type }: PostDetailProps) {
         </div>
       </div>
 
-      <div className="w-full px-4 md:px-6 pt-0 -mt-12 relative z-20 pb-20 bg-gray-50">
+      <div className="w-full px-4 md:px-6 pt-0 -mt-12 md:-mt-16 relative z-20 pb-20 bg-transparent">
         <div className="max-w-4xl mx-auto bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
           <div className="mb-8">
             <Link to="/updates" className="inline-flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-wider">
@@ -192,9 +192,9 @@ export default function PostDetail({ type }: PostDetailProps) {
                     
                     {(block.type === 'image' || block.type === 'media' || !block.type) && block.url && !block.url.includes('<iframe') && !block.url.endsWith('.mp4') && (
                       <figure className="my-8">
-                        <img src={block.url} alt={block.description || ''} className="w-full rounded-2xl bg-gray-50 max-h-[700px] object-cover" referrerPolicy="no-referrer" />
+                        <img src={block.url} alt={block.description || ''} className="w-full rounded-xl bg-gray-50 max-h-[400px] object-cover" referrerPolicy="no-referrer" />
                         {block.description && (
-                          <figcaption className="text-center text-gray-500 font-medium italic mt-3 text-base">{block.description}</figcaption>
+                          <figcaption className="text-center text-gray-500 font-medium italic mt-3 text-sm">{block.description}</figcaption>
                         )}
                       </figure>
                     )}
