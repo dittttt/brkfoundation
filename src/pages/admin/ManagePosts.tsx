@@ -597,10 +597,10 @@ const getRelativeTime = (date: string | null) => {
 
                         {(block.type === 'image' || block.type === 'media' || !block.type) && block.url && !block.url.includes('<iframe') && !block.url.endsWith('.mp4') && (
                           <figure className="my-6">
-                            <img src={block.url} alt={block.description || ''} className="w-full rounded-xl bg-gray-50 max-h-[400px] object-cover" />
-                            {block.description && (
-                              <figcaption className="text-center text-gray-500 font-medium italic mt-2 text-xs">{block.description}</figcaption>
-                            )}
+                              <img src={block.url} alt={block.description || ''} className="w-full rounded-xl bg-gray-50 aspect-[16/9] object-cover" />
+                              {block.description && (
+                                <figcaption className="text-center text-gray-500 font-medium italic mt-2 text-xs">{block.description}</figcaption>
+                              )}
                           </figure>
                         )}
 
