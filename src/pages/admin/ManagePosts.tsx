@@ -150,10 +150,10 @@ export default function ManagePosts() {
         images_data: editingPost.images_data || []
       };
 
-      if (user) {
-        postData.author_id = user.id;
-        postData.user_id = user.id;
-      }
+      // Remove setting user_id/author_id to prevent "column not found" errors
+      // if (user) {
+      //   postData.user_id = user.id;
+      // }
 
       if (editingPost.id) {
         const { error } = await supabase.from('news').update(postData).eq('id', editingPost.id);
@@ -289,10 +289,10 @@ export default function ManagePosts() {
         </div>
 
         {/* Two-Column Editor & Live Preview */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative items-start">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative items-stretch">
+
           {/* LEFT: Editor Column */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 pb-10">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 pb-10 flex flex-col h-full">
             {/* Header / Cover */}
             <div className="p-6 md:p-8 bg-slate-50 border-b border-gray-100">
               <label className="block text-sm font-bold text-gray-700 mb-2">Cover Image</label>
@@ -451,7 +451,7 @@ export default function ManagePosts() {
           </div>
 
           {/* RIGHT: Live Preview Column */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 sticky top-24 overflow-hidden h-[calc(100vh-8rem)] flex flex-col">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 flex flex-col h-full overflow-hidden">
             <div className="bg-slate-900 px-4 py-3 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -461,9 +461,8 @@ export default function ManagePosts() {
               <span className="text-slate-300 text-xs font-mono tracking-wider font-bold">Live Preview</span>
               <div className="w-10"></div>
             </div>
-            
-            <div className="flex-1 overflow-y-auto bg-gray-50 pointer-events-none p-0 m-0">
-              
+
+            <div className="flex-1 bg-gray-50 pointer-events-none p-0 m-0">
               {/* Banner Header for Preview */}
               <div className="relative w-full h-[250px] bg-dark flex flex-col justify-end">
                 {editingPost.image_url && (
