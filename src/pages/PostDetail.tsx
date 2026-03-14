@@ -81,32 +81,32 @@ export default function PostDetail({ type }: PostDetailProps) {
   return (
     <MainLayout>
       {/* Banner Header instead of inline image */}
-      <div className="relative w-full h-[40vh] min-h-[350px] bg-dark flex flex-col justify-end">
+      <div className="relative w-full h-[50vh] min-h-[400px] bg-dark flex flex-col justify-end">
         {post.image_url && (
           <div className="absolute inset-0 z-0">
             <img
               src={post.image_url}
               alt={post.title}
-              className="w-full h-full object-cover opacity-60"
+              className="w-full h-full object-cover opacity-80"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/60 to-transparent" />
+            {/* Soft gradient to blend with the white card below */}
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
           </div>
         )}
-        
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-12">
-          <div className="mb-4 flex items-center gap-4">
-            <span className="text-secondary text-sm font-bold uppercase tracking-wider">{yearStr}</span>
-            <span className="text-gray-300 text-sm uppercase tracking-wider font-bold">{type}</span>
-          </div>
-
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-black text-white leading-tight mb-2">
-            {post.title}
-          </h1>
-        </div>
       </div>
 
-      <Section bg="white" className="pt-0 -mt-10 relative z-20">
-        <div className="max-w-4xl mx-auto bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-gray-100">
+      <Section bg="white" className="pt-0 -mt-24 relative z-20">
+        <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
+          
+          <div className="mb-6 flex items-center gap-4">
+            <span className="text-secondary text-sm font-bold uppercase tracking-wider">{yearStr}</span>
+            <span className="text-gray-400 text-sm uppercase tracking-wider font-bold">{type}</span>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-black text-gray-900 leading-tight mb-8">
+            {post.title}
+          </h1>
+
           {/* Metadata: Date, Views, Last Updated */}
           <div className="flex flex-wrap items-center justify-between gap-6 text-gray-500 text-sm font-medium mb-12 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-6">

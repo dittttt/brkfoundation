@@ -40,6 +40,7 @@ export default function ManagePosts() {
   const [editingPost, setEditingPost] = useState<NewsPost | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetchPosts();
@@ -209,25 +210,38 @@ export default function ManagePosts() {
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
-    e.dataTransfer.setData('blockIndex', index.toString());
+    setDraggedIndex(index);
+    // Needed for Firefox
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData('text/plain', index.toString());
+    }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragEnter = (e: React.DragEvent, targetIndex: number) => {
     e.preventDefault();
-  };
-
-  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
-    e.preventDefault();
-    const sourceIndexStr = e.dataTransfer.getData('blockIndex');
-    if (!sourceIndexStr) return;
-    const sourceIndex = parseInt(sourceIndexStr, 10);
-    if (sourceIndex === targetIndex || isNaN(sourceIndex)) return;
+    if (draggedIndex === null || draggedIndex === targetIndex) return;
 
     if (!editingPost) return;
     const newBlocks = [...(editingPost.images_data || [])];
-    const [draggedBlock] = newBlocks.splice(sourceIndex, 1);
+    const [draggedBlock] = newBlocks.splice(draggedIndex, 1);
     newBlocks.splice(targetIndex, 0, draggedBlock);
+    
     setEditingPost({ ...editingPost, images_data: newBlocks });
+    setDraggedIndex(targetIndex);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // Necessary to allow dropping
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDraggedIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
   };
 
   if (loading) return <div className="p-8 text-center text-gray-500">Loading posts...</div>;
@@ -250,7 +264,7 @@ export default function ManagePosts() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative items-start">
           
           {/* LEFT: Editor Column */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 pb-10">
             {/* Header / Cover */}
             <div className="p-6 bg-slate-50 border-b border-gray-100">
               <label className="block text-sm font-bold text-gray-700 mb-2">Cover Image</label>
@@ -307,20 +321,20 @@ export default function ManagePosts() {
               <hr className="border-gray-100" />
 
               {/* Blocks Editor */}
-              <div className="space-y-6">
+              <div className="space-y-6 px-6 md:px-8 relative z-50">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">Content Blocks</h3>
-                  <div className="relative">
+                  <div className="relative z-50">
                     <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-sm transition-transform active:scale-95">
                       <Plus className="w-5 h-5" />
                     </button>
                     <AnimatePresence>
                       {dropdownOpen && (
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0, y: -10, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                          className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden z-30"
+                          className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden z-[100]"
                         >
                           <div className="p-1">
                             <button onClick={() => { addBlock('text'); setDropdownOpen(false); }} className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg flex items-center">
@@ -338,21 +352,23 @@ export default function ManagePosts() {
                 
                 <AnimatePresence>
                   {(editingPost.images_data || []).map((block, index) => (
-                    <motion.div 
+                    <motion.div
                          layout
                          initial={{ opacity: 0, y: 20 }}
                          animate={{ opacity: 1, y: 0 }}
                          exit={{ opacity: 0, height: 0, overflow: 'hidden', margin: 0, padding: 0 }}
                          transition={{ duration: 0.2 }}
-                         key={block.id} 
+                         key={block.id}
+                         onDragEnter={(e) => handleDragEnter(e, index)}
                          onDragOver={handleDragOver}
-                         onDrop={(e) => handleDrop(e, index)}
-                         className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-sm group transition-all hover:border-blue-300 hover:shadow-md mb-6">
+                         onDrop={handleDrop}
+                         className={`relative bg-white border border-gray-200 rounded-xl pt-10 p-5 shadow-sm transition-all mb-6 w-full ${draggedIndex === index ? 'opacity-50 scale-95 border-blue-400 border-dashed' : 'hover:border-blue-300 hover:shadow-md'}`}>
                       
-                      <div className="absolute top-4 right-4 flex items-center gap-2 opacity-100 z-10 bg-white p-1 rounded-lg border border-gray-50 shadow-sm">
-                        <div draggable 
+                      <div className="absolute top-2 right-2 flex items-center gap-2 opacity-100 z-10 bg-white p-1 rounded-lg border border-gray-100 shadow-sm cursor-grab">
+                        <div draggable
                              onDragStart={(e) => handleDragStart(e, index)}
-                             className="cursor-grab hover:bg-gray-100 p-1.5 rounded-md text-gray-400 active:cursor-grabbing transition-colors" 
+                             onDragEnd={handleDragEnd}
+                             className="hover:bg-gray-100 p-1.5 rounded-md text-gray-400 active:cursor-grabbing transition-colors"
                              title="Drag to reorder">
                           <GripVertical className="w-4 h-4" />
                         </div>
@@ -362,12 +378,10 @@ export default function ManagePosts() {
                         </button>
                       </div>
 
-                      <div className="pr-16">
+                      <div className="w-full">
                         <div className="mb-4 flex items-center gap-2">
                           {block.type === 'text' && <Type className="w-4 h-4 text-blue-500" />}
-                          {(block.type === 'image' || block.type === 'media') && <ImageIcon className="w-4 h-4 text-emerald-500" />}
-                          {block.type === 'video' && <Video className="w-4 h-4 text-purple-500" />}
-                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{block.type === 'image' || block.type === 'video' ? 'media' : block.type} Block</span>
+                          {(block.type === 'image' || block.type === 'media' || block.type === 'video') && <ImageIcon className="w-4 h-4 text-emerald-500" />}
                         </div>
 
                       {block.type === 'text' && (
@@ -377,13 +391,13 @@ export default function ManagePosts() {
                         </div>
                       )}
 
-                      {block.type === 'image' && (
+                      {(block.type === 'image' || block.type === 'video' || block.type === 'media') && (
                         <div className="space-y-3">
                           <div className="flex gap-2">
-                            <input type="text" value={block.url || ''} onChange={(e) => updateBlock(index, 'url', e.target.value)} className="flex-1 text-sm border-gray-300 rounded-md focus:border-blue-500 p-2 outline-none" placeholder="Image URL (or upload ->)" />
-                            <label className="px-3 py-2 bg-slate-100 border border-gray-200 rounded-md cursor-pointer hover:bg-slate-200 flex items-center text-sm">
+                            <input type="text" value={block.url || ''} onChange={(e) => updateBlock(index, 'url', e.target.value)} className="flex-1 text-sm border-gray-300 rounded-md focus:border-blue-500 p-2 outline-none" placeholder="Media URL (Image/Video, YouTube, MP4, etc. or upload ->)" />
+                            <label className="px-4 py-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-md cursor-pointer hover:bg-blue-100 flex items-center text-sm font-semibold transition-colors">
                               <Upload size={14} className="mr-1" /> Upload
-                              <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                              <input type="file" className="hidden" accept="image/*,video/*" onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   const url = await handleImageUpload(file);
@@ -392,26 +406,7 @@ export default function ManagePosts() {
                               }} />
                             </label>
                           </div>
-                          <textarea value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full border-gray-200 rounded-md text-sm bg-slate-50 focus:border-blue-500 resize-none p-2 outline-none" rows={2} placeholder="Image caption or description..." />
-                        </div>
-                      )}
-
-                      {block.type === 'video' && (
-                        <div className="space-y-4">
-                          <div className="flex gap-2">
-                            <input type="text" value={block.url || ''} onChange={(e) => updateBlock(index, 'url', e.target.value)} className="flex-1 text-sm border-gray-300 rounded-md focus:border-blue-500 p-2 outline-none" placeholder="Video URL (YouTube embed link, mp4, etc. or upload ->)" />
-                            <label className="px-3 py-2 bg-slate-100 border border-gray-200 rounded-md cursor-pointer hover:bg-slate-200 flex items-center text-sm">
-                              <Upload size={14} className="mr-1" /> Upload
-                              <input type="file" className="hidden" accept="video/*" onChange={async (e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  const url = await handleImageUpload(file);
-                                  if (url) updateBlock(index, 'url', url);
-                                }
-                              }} />
-                            </label>
-                          </div>
-                          <textarea value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full border-gray-200 rounded-md text-sm bg-slate-50 p-2 outline-none resize-none focus:border-blue-500" rows={2} placeholder="Video caption or description..." />
+                          <textarea value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full border-gray-200 rounded-md text-sm bg-slate-50 focus:border-blue-500 resize-none p-2 outline-none" rows={2} placeholder="Media caption or description..." />
                         </div>
                       )}
                     </div>
