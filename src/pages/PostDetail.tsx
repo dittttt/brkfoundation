@@ -5,6 +5,7 @@ import { Section } from '../components/ui';
 import { getRelativeTime } from '../lib/utils';
 import { ChevronLeft, ChevronRight, Clock, Eye, Share2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import 'react-quill-new/dist/quill.snow.css';
 
 interface PostDetailProps {
   type: 'news' | 'gallery';
@@ -158,18 +159,18 @@ export default function PostDetail({ type }: PostDetailProps) {
           </div>
 
           {/* Content */}
-            <div className="prose max-w-none whitespace-pre-wrap prose-p:mb-4 prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base mb-16 font-sans">
-              {type === 'news' && post.content && (!post.images_data || post.images_data.length === 0) && (
-                <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />
-              )}
+              <div className="prose max-w-none prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base mb-16 font-sans">
+                {type === 'news' && post.content && (!post.images_data || post.images_data.length === 0) && (
+                <div className="ql-editor !p-0 mb-10" dangerouslySetInnerHTML={{ __html: post.content }} />
+                )}
 
-            {type === 'news' ? (
-              <div className="space-y-10 leading-[1.5]">
-                {(post.images_data || []).map((block: any, idx: number) => (
-                  <div key={block.id || idx}>
-                    {block.type === 'text' && (
-                      <div>
-                         <div dangerouslySetInnerHTML={{ __html: block.content || '' }} />
+              {type === 'news' ? (
+                <div className="space-y-10 leading-[1.5]">
+                  {(post.images_data || []).map((block: any, idx: number) => (
+                    <div key={block.id || idx}>
+                      {block.type === 'text' && (
+                        <div>
+                         <div className="ql-editor !p-0" dangerouslySetInnerHTML={{ __html: block.content || '' }} />
                          {block.description && (
                            <p className="text-sm text-gray-400 italic mt-2 border-l-2 border-gray-200 pl-3">{block.description}</p>
                          )}
