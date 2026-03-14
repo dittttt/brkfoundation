@@ -63,22 +63,13 @@ export default function AdminLayout() {
             <span className="font-bold">Dashboard</span>
           </Link>
           <Link
-            to="/admin/news"
+            to="/admin/posts"
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-              location.pathname.startsWith('/admin/news') ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-50'
+              location.pathname.startsWith('/admin/posts') ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
             <FileText size={20} />
-            <span className="font-bold">News</span>
-          </Link>
-          <Link
-            to="/admin/gallery"
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-              location.pathname.startsWith('/admin/gallery') ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <ImageIcon size={20} />
-            <span className="font-bold">Gallery</span>
+            <span className="font-bold">Posts</span>
           </Link>
         </nav>
         <div className="p-4 border-t border-gray-200">

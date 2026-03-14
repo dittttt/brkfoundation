@@ -16,8 +16,7 @@ import PostDetail from './pages/PostDetail';
 import AdminLayout from './layouts/AdminLayout';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
-import ManageNews from './pages/admin/ManageNews';
-import ManageGallery from './pages/admin/ManageGallery';
+import ManagePosts from './pages/admin/ManagePosts';
 
 export default function App() {
   return (
@@ -41,8 +40,7 @@ export default function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="login" element={<AdminLogin />} />
           <Route index element={<AdminDashboard />} />
-          <Route path="news" element={<ManageNews />} />
-          <Route path="gallery" element={<ManageGallery />} />
+          <Route path="posts" element={<ManagePosts />} />
         </Route>
       </Routes>
     </Router>
