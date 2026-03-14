@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 import { Section } from '../components/ui';
+import { getRelativeTime } from '../lib/utils';
 import { ChevronLeft, ChevronRight, Clock, Eye, Share2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -75,22 +76,6 @@ export default function PostDetail({ type }: PostDetailProps) {
   }
 
   const dateStr = new Date(post.created_at || post.published_at).toLocaleDateString();
-  const getRelativeTime = (date: string | null) => {
-    if (!date) return 'Recently';
-    const now = new Date();
-    const past = new Date(date);
-    const diffInSecs = Math.floor((now.getTime() - past.getTime()) / 1000);
-    const diffInMins = Math.floor(diffInSecs / 60);
-    const diffInHours = Math.floor(diffInMins / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
-
-    if (diffInSecs < 60) return 'Just now';
-    if (diffInMins < 60) return `${diffInMins} min${diffInMins > 1 ? 's' : ''} ago`;
-    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-    if (diffInDays === 1) return 'Yesterday';
-    if (diffInDays <= 7) return `${diffInDays} days ago`;
-    return past.toLocaleDateString();
-  };
 
   const relativeTimeStr = getRelativeTime(post.created_at || post.published_at);
   const updatedDateStr = post.updated_at ? new Date(post.updated_at).toLocaleDateString() : dateStr;
@@ -255,5 +240,4 @@ export default function PostDetail({ type }: PostDetailProps) {
       </div>
     </MainLayout>
   );
-}
-  
+};
