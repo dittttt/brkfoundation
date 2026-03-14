@@ -572,8 +572,10 @@ export default function ManagePosts() {
                       {(editingPost.images_data || []).map((block) => (
                         <div key={block.id} className="mb-8">
                           {block.type === 'text' && (
-                            <div>
-                              <div className="ql-editor !p-0" dangerouslySetInnerHTML={{ __html: block.content || '' }} />
+                            <div className="not-prose pb-2">
+                              <div className="ql-container ql-snow preview-quill">
+                                <div className="ql-editor" dangerouslySetInnerHTML={{ __html: block.content || '' }} />
+                              </div>
                             {block.description && (
                               <p className="text-xs text-gray-400 italic mt-2 border-l-2 border-gray-200 pl-3">{block.description}</p>
                             )}

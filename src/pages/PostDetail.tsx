@@ -161,7 +161,9 @@ export default function PostDetail({ type }: PostDetailProps) {
           {/* Content */}
               <div className="prose max-w-none prose-a:text-blue-600 text-gray-700 leading-[1.5] text-sm md:text-base mb-16 font-sans">
                 {type === 'news' && post.content && (!post.images_data || post.images_data.length === 0) && (
-                <div className="ql-editor !p-0 mb-10" dangerouslySetInnerHTML={{ __html: post.content }} />
+                <div className="not-prose ql-container ql-snow preview-quill">
+                  <div className="ql-editor" dangerouslySetInnerHTML={{ __html: post.content }} />
+                </div>
                 )}
 
               {type === 'news' ? (
@@ -169,8 +171,10 @@ export default function PostDetail({ type }: PostDetailProps) {
                   {(post.images_data || []).map((block: any, idx: number) => (
                     <div key={block.id || idx}>
                       {block.type === 'text' && (
-                        <div>
-                         <div className="ql-editor !p-0" dangerouslySetInnerHTML={{ __html: block.content || '' }} />
+                        <div className="not-prose pb-2">
+                         <div className="ql-container ql-snow preview-quill">
+                           <div className="ql-editor" dangerouslySetInnerHTML={{ __html: block.content || '' }} />
+                         </div>
                          {block.description && (
                            <p className="text-sm text-gray-400 italic mt-2 border-l-2 border-gray-200 pl-3">{block.description}</p>
                          )}

@@ -98,30 +98,17 @@ html {
   font-family: inherit !important;
   font-size: 1rem !important;
 }
-.ql-editor {
+
+/* Remove borders and padding for read-only preview mode */
+.ql-container.ql-snow.preview-quill {
+  border: none !important;
+}
+.preview-quill .ql-editor {
+  padding: 0 !important;
+  min-height: auto !important;
+}
+
+.ql-container .ql-editor {
   min-height: 150px;
-}
-.ql-editor p,
-.ql-editor ul,
-.ql-editor ol {
-  margin-bottom: 0.75rem !important;
-}
-.ql-editor h1,
-.ql-editor h2,
-.ql-editor h3 {
-  margin-top: 1.5rem !important;
-  margin-bottom: 0.5rem !important;
-}
-.ql-editor h1:first-child,
-.ql-editor h2:first-child,
-.ql-editor h3:first-child,
-.ql-editor p:first-child {
-  margin-top: 0 !important;
-}
-.ql-editor *:last-child {
-  margin-bottom: 0 !important;
-}
-.ql-editor p > br {
-  display: block !important;
 }
 
