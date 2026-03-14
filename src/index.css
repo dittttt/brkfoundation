@@ -106,6 +106,24 @@ html {
 .preview-quill .ql-editor {
   padding: 0 !important;
   min-height: auto !important;
+  white-space: normal !important;
+  /* Ensure empty paragraphs and single <br> lines are visible in preview */
+}
+
+/* Preserve Quill's empty paragraphs (e.g. <p><br></p>) inside the preview container */
+.preview-quill .ql-editor p:empty {
+  min-height: 0.75rem;
+}
+.preview-quill .ql-editor p:empty::before {
+  content: "\00a0";
+  display: block;
+  height: 0.75rem;
+}
+.preview-quill .ql-editor p > br,
+.preview-quill .ql-editor br {
+  display: block;
+  height: 0.75rem;
+  line-height: 1;
 }
 
 .ql-container .ql-editor {
