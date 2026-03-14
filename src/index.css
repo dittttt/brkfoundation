@@ -104,10 +104,13 @@ html {
   border: none !important;
 }
 .preview-quill .ql-editor {
-  padding: 0 !important;
+  /* Match Quill editor spacing so preview mirrors the editor */
+  padding: 12px 15px !important;
   min-height: auto !important;
-  white-space: normal !important;
-  /* Ensure empty paragraphs and single <br> lines are visible in preview */
+  line-height: 1.42 !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  font-size: 13px !important;
 }
 
 /* Preserve Quill's empty paragraphs (e.g. <p><br></p>) inside the preview container */
