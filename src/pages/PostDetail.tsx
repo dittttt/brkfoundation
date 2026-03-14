@@ -112,7 +112,7 @@ export default function PostDetail({ type }: PostDetailProps) {
         )}
 
         {/* Banner Overlays (Like original) */}
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-[calc(10vh+2rem)]">
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-28">
           <div className="flex items-center gap-4">
             <span className="text-secondary text-base font-bold uppercase tracking-widest">{yearStr}</span>
             <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
@@ -121,10 +121,10 @@ export default function PostDetail({ type }: PostDetailProps) {
         </div>
       </div>
 
-      <Section bg="white" className="pt-0 -mt-24 relative z-20">
+      <Section bg="white" className="pt-0 -mt-16 md:-mt-20 relative z-20">
         <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
           
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-8">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-black text-gray-900 leading-tight mb-8">
             {post.title}
           </h1>
 

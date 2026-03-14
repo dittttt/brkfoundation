@@ -138,6 +138,8 @@ export default function ManagePosts() {
         console.warn("Invalid date, fallback to now");
       }
 
+      const { data: { user } } = await supabase.auth.getUser();
+
       const postData: any = {
         title: editingPost.title,
         slug: editingPost.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
@@ -147,6 +149,11 @@ export default function ManagePosts() {
         image_url: editingPost.image_url,
         images_data: editingPost.images_data || []
       };
+
+      if (user) {
+        postData.author_id = user.id;
+        postData.user_id = user.id;
+      }
 
       if (editingPost.id) {
         const { error } = await supabase.from('news').update(postData).eq('id', editingPost.id);
@@ -182,7 +189,7 @@ export default function ManagePosts() {
       return data.publicUrl;
     } catch (error: any) {
       console.error('Upload Error:', error);
-      alert('Error uploading image.');
+      alert('Error uploading media: ' + error.message);
       return null;
     }
   };
@@ -287,7 +294,7 @@ export default function ManagePosts() {
           {/* LEFT: Editor Column */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 pb-10">
             {/* Header / Cover */}
-            <div className="p-6 bg-slate-50 border-b border-gray-100">
+            <div className="p-6 md:p-8 bg-slate-50 border-b border-gray-100">
               <label className="block text-sm font-bold text-gray-700 mb-2">Cover Image</label>
               <div className="flex items-center gap-2 border-2 border-dashed border-gray-300 p-2 rounded-xl bg-white focus-within:border-blue-500 focus-within:bg-blue-50 transition-colors">
                 <input type="text" value={editingPost.image_url} onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })} className="flex-1 w-full bg-transparent border-none shadow-none focus:ring-0 text-sm px-2 py-1 outline-none" placeholder="Paste image URL here or upload right ->" />
@@ -316,7 +323,7 @@ export default function ManagePosts() {
                 />
 
                 {/* Dates */}
-                <div className="flex flex-col sm:flex-row gap-4 px-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex-1 flex flex-col gap-1">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Published On</label>
                     <input 
@@ -342,7 +349,7 @@ export default function ManagePosts() {
               <hr className="border-gray-100" />
 
               {/* Blocks Editor */}
-              <div className="space-y-6 px-6 md:px-8 relative z-50">
+              <div className="space-y-6 relative z-50">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">Content Blocks</h3>
                   <div className="relative z-50">
@@ -432,7 +439,7 @@ export default function ManagePosts() {
                               }} />
                             </label>
                           </div>
-                          <textarea value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full border-gray-200 rounded-xl text-sm bg-slate-50 focus:border-blue-500 resize-none p-2 outline-none focus:ring-0" rows={2} placeholder="Media caption or description..." />
+                          <input type="text" value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full text-sm border-gray-200 rounded-md bg-slate-50 focus:border-blue-500 p-2 outline-none" placeholder="Media caption or description..." />
                         </div>
                       )}
                     </div>
@@ -458,7 +465,7 @@ export default function ManagePosts() {
             <div className="flex-1 overflow-y-auto bg-gray-50 pointer-events-none p-0 m-0">
               
               {/* Banner Header for Preview */}
-              <div className="relative w-full h-[250px] bg-slate-900 flex flex-col justify-end">
+              <div className="relative w-full h-[250px] bg-dark flex flex-col justify-end">
                 {editingPost.image_url && (
                   <div className="absolute inset-0 z-0">
                     <img
@@ -466,11 +473,11 @@ export default function ManagePosts() {
                       alt={editingPost.title}
                       className="w-full h-full object-cover opacity-60"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/40 to-transparent" />
                   </div>
                 )}
 
-                <div className="relative z-10 w-full px-6 pb-[min(4vh,2rem)]">
+                <div className="relative z-10 w-full px-6 pb-20">
                   <div className="flex items-center gap-3">
                     <span className="text-secondary text-xs font-bold uppercase tracking-widest">
                       {editingPost.created_at ? new Date(editingPost.created_at).getFullYear() : '2026'}
@@ -481,7 +488,7 @@ export default function ManagePosts() {
                 </div>
               </div>
 
-              <div className="px-4 md:px-6 pt-0 -mt-10 relative z-20 pb-20">
+              <div className="px-4 md:px-6 pt-0 -mt-12 relative z-20 pb-20">
                 <div className="bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
                   <h1 className="text-2xl md:text-3xl font-display font-black text-gray-900 leading-tight mb-6">
                     {editingPost.title || 'Untitled Post'}
