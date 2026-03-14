@@ -75,6 +75,24 @@ export default function PostDetail({ type }: PostDetailProps) {
   }
 
   const dateStr = new Date(post.created_at || post.published_at).toLocaleDateString();
+  const getRelativeTime = (date: string | null) => {
+    if (!date) return 'Recently';
+    const now = new Date();
+    const past = new Date(date);
+    const diffInSecs = Math.floor((now.getTime() - past.getTime()) / 1000);
+    const diffInMins = Math.floor(diffInSecs / 60);
+    const diffInHours = Math.floor(diffInMins / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInSecs < 60) return 'Just now';
+    if (diffInMins < 60) return `${diffInMins} min${diffInMins > 1 ? 's' : ''} ago`;
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    if (diffInDays === 1) return 'Yesterday';
+    if (diffInDays <= 7) return `${diffInDays} days ago`;
+    return past.toLocaleDateString();
+  };
+
+  const relativeTimeStr = getRelativeTime(post.created_at || post.published_at);
   const updatedDateStr = post.updated_at ? new Date(post.updated_at).toLocaleDateString() : dateStr;
   const yearStr = new Date(post.created_at || post.published_at).getFullYear();
 
@@ -87,23 +105,26 @@ export default function PostDetail({ type }: PostDetailProps) {
             <img
               src={post.image_url}
               alt={post.title}
-              className="w-full h-full object-cover opacity-80"
+              className="w-full h-full object-cover opacity-60"
             />
-            {/* Soft gradient to blend with the white card below */}
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/40 to-transparent" />
           </div>
         )}
+
+        {/* Banner Overlays (Like original) */}
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-[calc(10vh+2rem)]">
+          <div className="flex items-center gap-4">
+            <span className="text-secondary text-base font-bold uppercase tracking-widest">{yearStr}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            <span className="text-white text-base uppercase tracking-widest font-bold">{type}</span>
+          </div>
+        </div>
       </div>
 
       <Section bg="white" className="pt-0 -mt-24 relative z-20">
         <div className="max-w-4xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
           
-          <div className="mb-6 flex items-center gap-4">
-            <span className="text-secondary text-sm font-bold uppercase tracking-wider">{yearStr}</span>
-            <span className="text-gray-400 text-sm uppercase tracking-wider font-bold">{type}</span>
-          </div>
-
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-black text-gray-900 leading-tight mb-8">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-8">
             {post.title}
           </h1>
 
@@ -111,12 +132,12 @@ export default function PostDetail({ type }: PostDetailProps) {
           <div className="flex flex-wrap items-center justify-between gap-6 text-gray-500 text-sm font-medium mb-12 pb-6 border-b border-gray-100">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <span>Published: {dateStr}</span>
+                <span>Published {relativeTimeStr}</span>
               </div>
               {post.updated_at && post.updated_at !== post.created_at && (
                 <div className="flex items-center gap-2">
                   <Clock size={16} />
-                  <span>Last updated: {updatedDateStr}</span>
+                  <span>Updated: {updatedDateStr}</span>
                 </div>
               )}
             </div>
