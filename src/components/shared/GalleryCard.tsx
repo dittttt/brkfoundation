@@ -7,6 +7,7 @@ interface GalleryItem {
   title: string;
   date: string;
   image: string;
+  slug?: string;
 }
 
 export interface GalleryCardProps {
@@ -17,7 +18,7 @@ export interface GalleryCardProps {
 export const GalleryCard: React.FC<GalleryCardProps> = ({ item, delay = 0 }) => {
   return (
     <FadeIn delay={delay} className="group cursor-pointer">
-      <Link to="/demoboard" className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+      <Link to={item.slug ? `/gallery/${item.slug}` : "/demoboard"} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
         <div className="relative overflow-hidden aspect-[4/3]">
           <img 
             src={item.image} 

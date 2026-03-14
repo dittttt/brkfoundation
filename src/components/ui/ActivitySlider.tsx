@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
 import AutoScroll from 'embla-carousel-auto-scroll';
 
@@ -6,6 +7,7 @@ interface Activity {
   title: string;
   date: string;
   image: string;
+  slug?: string;
 }
 
 interface ActivitySliderProps {
@@ -14,18 +16,18 @@ interface ActivitySliderProps {
 
 export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { 
-      loop: true, 
-      align: 'start', 
+    {
+      loop: true,
+      align: 'start',
       skipSnaps: false,
       dragFree: true
-    }, 
+    },
     [
-      AutoScroll({ 
-        speed: 1.5, 
-        startDelay: 0, 
-        stopOnInteraction: false, 
-        stopOnMouseEnter: true 
+      AutoScroll({
+        speed: 1.5,
+        startDelay: 0,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true
       })
     ]
   );
@@ -55,26 +57,45 @@ export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) =>
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex touch-pan-y py-8 -ml-6">
           {activities.map((item, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="flex-[0_0_70%] md:flex-[0_0_35%] lg:flex-[0_0_22%] min-w-0 pl-6"
             >
-              <div className="bg-white rounded-3xl overflow-hidden shadow-sm h-full group">
-                <div className="relative overflow-hidden aspect-square">
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/60" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-8 text-white opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                    <h3 className="text-2xl font-display font-bold mb-4 leading-tight">{item.title}</h3>
-                    <p className="text-sm font-medium opacity-80 uppercase tracking-wider">{item.date}</p>
+              {item.slug ? (
+                <Link to={`/gallery/${item.slug}`} className="block bg-white rounded-3xl overflow-hidden shadow-sm h-full group pb-2">
+                  <div className="relative overflow-hidden aspect-square">        
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/60" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-8 text-white opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+                      <h3 className="text-2xl font-display font-bold mb-4 leading-tight">{item.title}</h3>
+                      <p className="text-sm font-medium opacity-80 uppercase tracking-wider">{item.date}</p>
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div className="bg-white rounded-3xl overflow-hidden shadow-sm h-full group">
+                  <div className="relative overflow-hidden aspect-square">        
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/60" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-8 text-white opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+                      <h3 className="text-2xl font-display font-bold mb-4 leading-tight">{item.title}</h3>
+                      <p className="text-sm font-medium opacity-80 uppercase tracking-wider">{item.date}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
@@ -84,8 +105,8 @@ export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) =>
       <div className="mt-2 px-2 md:px-0 max-w-xs mx-auto">
         <div className="relative h-1 w-full bg-gray-200 rounded-full overflow-hidden">
           <div
-            className="absolute top-0 bottom-0 bg-black rounded-full w-[25%]"
-            style={{ 
+            className="absolute top-0 bottom-0 bg-black rounded-full w-[25%]"   
+            style={{
               transform: `translate3d(${scrollProgress * 3}%, 0, 0)`,
               willChange: 'transform'
             }}

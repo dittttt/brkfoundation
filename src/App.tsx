@@ -27,7 +27,8 @@ export default function App() {
         <Route path="/updates" element={<News />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/donate" element={<Donate />} />
-        <Route path="/demoboard" element={<PostDetail />} />
+        <Route path="/news/:slug" element={<PostDetail type="news" />} />
+        <Route path="/gallery/:slug" element={<PostDetail type="gallery" />} />
       </Routes>
     </Router>
   );
