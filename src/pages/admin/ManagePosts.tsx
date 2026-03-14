@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, ArrowUp, ArrowDown, Video, Type, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -23,6 +23,15 @@ interface NewsPost {
   is_featured_news?: boolean;
   images_data: NewsBlock[];
 }
+
+const QUILL_MODULES = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    ['link', 'clean']
+  ],
+};
 
 export default function ManagePosts() {
   const [posts, setPosts] = useState<NewsPost[]>([]);
@@ -190,17 +199,6 @@ export default function ManagePosts() {
     setEditingPost({ ...editingPost, images_data: newBlocks });
   };
 
-  const moveBlock = (index: number, direction: 'up' | 'down') => {
-    if (!editingPost) return;
-    const blocks = [...(editingPost.images_data || [])];
-    if (direction === 'up' && index > 0) {
-      [blocks[index - 1], blocks[index]] = [blocks[index], blocks[index - 1]];
-    } else if (direction === 'down' && index < blocks.length - 1) {
-      [blocks[index + 1], blocks[index]] = [blocks[index], blocks[index + 1]];
-    }
-    setEditingPost({ ...editingPost, images_data: blocks });
-  };
-
   const updateBlock = (index: number, field: keyof NewsBlock, value: any) => {
     if (!editingPost) return;
     const blocks = [...(editingPost.images_data || [])];
@@ -208,13 +206,26 @@ export default function ManagePosts() {
     setEditingPost({ ...editingPost, images_data: blocks });
   };
 
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['link', 'clean']
-    ],
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.setData('blockIndex', index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    const sourceIndexStr = e.dataTransfer.getData('blockIndex');
+    if (!sourceIndexStr) return;
+    const sourceIndex = parseInt(sourceIndexStr, 10);
+    if (sourceIndex === targetIndex || isNaN(sourceIndex)) return;
+
+    if (!editingPost) return;
+    const newBlocks = [...(editingPost.images_data || [])];
+    const [draggedBlock] = newBlocks.splice(sourceIndex, 1);
+    newBlocks.splice(targetIndex, 0, draggedBlock);
+    setEditingPost({ ...editingPost, images_data: newBlocks });
   };
 
   if (loading) return <div className="p-8 text-center text-gray-500">Loading posts...</div>;
@@ -242,7 +253,7 @@ export default function ManagePosts() {
             <div className="p-6 space-y-4 bg-slate-50 border-b border-gray-100">
               <label className="block text-sm font-bold text-gray-700">Cover Image URL</label>
               <div className="flex gap-2">
-                <input type="text" value={editingPost.image_url} onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })} className="flex-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" placeholder="Paste image URL here..." />
+                <input type="text" value={editingPost.image_url} onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })} className="flex-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-4 py-2" placeholder="Paste image URL here..." />
                 <label className="px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 text-sm font-medium flex items-center">
                   <Upload className="w-4 h-4 mr-2" /> Upload
                   <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
@@ -266,18 +277,31 @@ export default function ManagePosts() {
 
               {/* Blocks Editor */}
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">Content Blocks</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">Content Blocks</h3>
+                </div>
                 
                 {(editingPost.images_data || []).map((block, index) => (
-                  <div key={block.id} className="relative bg-white border border-gray-200 rounded-xl p-4 shadow-sm group transition-all hover:border-blue-300">
-                    <div className="absolute -left-3 top-4 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                      <button onClick={() => moveBlock(index, 'up')} disabled={index === 0} className="w-6 h-6 bg-white border shadow-sm rounded-full flex items-center justify-center text-gray-500 hover:text-blue-600 disabled:opacity-30"><ArrowUp className="w-3 h-3" /></button>
-                      <button onClick={() => moveBlock(index, 'down')} disabled={index === editingPost.images_data.length - 1} className="w-6 h-6 bg-white border shadow-sm rounded-full flex items-center justify-center text-gray-500 hover:text-blue-600 disabled:opacity-30"><ArrowDown className="w-3 h-3" /></button>
-                      <button onClick={() => removeBlock(index)} className="w-6 h-6 bg-white border shadow-sm rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 disabled:opacity-30 mt-2"><Trash2 className="w-3 h-3" /></button>
+                  <div key={block.id} 
+                       onDragOver={handleDragOver}
+                       onDrop={(e) => handleDrop(e, index)}
+                       className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-sm group transition-all hover:border-blue-300 hover:shadow-md">
+                    
+                    <div className="absolute top-4 right-4 flex items-center gap-2 opacity-100 z-10 bg-white p-1 rounded-lg border border-gray-50 shadow-sm">
+                      <div draggable 
+                           onDragStart={(e) => handleDragStart(e, index)}
+                           className="cursor-grab hover:bg-gray-100 p-1.5 rounded-md text-gray-400 active:cursor-grabbing transition-colors" 
+                           title="Drag to reorder">
+                        <GripVertical className="w-4 h-4" />
+                      </div>
+                      <div className="w-px h-4 bg-gray-200"></div>
+                      <button onClick={() => removeBlock(index)} className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-md transition-colors" title="Delete block">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
 
-                    <div className="ml-2">
-                      <div className="mb-2 flex items-center gap-2">
+                    <div className="pr-16">
+                      <div className="mb-4 flex items-center gap-2">
                         {block.type === 'text' && <Type className="w-4 h-4 text-blue-500" />}
                         {block.type === 'image' && <ImageIcon className="w-4 h-4 text-emerald-500" />}
                         {block.type === 'video' && <Video className="w-4 h-4 text-purple-500" />}
@@ -286,7 +310,7 @@ export default function ManagePosts() {
 
                       {block.type === 'text' && (
                         <div className="space-y-3">
-                          <ReactQuill theme="snow" value={block.content || ''} onChange={(val) => updateBlock(index, 'content', val)} className="bg-white" modules={modules} />
+                          <ReactQuill theme="snow" value={block.content || ''} onChange={(val) => updateBlock(index, 'content', val)} className="bg-white" modules={QUILL_MODULES} />
                           <input type="text" placeholder="Optional block description/notes..." value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full text-sm border-gray-200 rounded-md bg-slate-50 focus:border-blue-500 p-2 outline-none" />
                         </div>
                       )}
@@ -311,9 +335,21 @@ export default function ManagePosts() {
                       )}
 
                       {block.type === 'video' && (
-                        <div className="space-y-3">
-                          <input type="text" value={block.url || ''} onChange={(e) => updateBlock(index, 'url', e.target.value)} className="w-full text-sm border-gray-300 rounded-md p-2 outline-none" placeholder="Video URL (YouTube embed link, mp4, etc.)" />
-                          <textarea value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full border-gray-200 rounded-md text-sm bg-slate-50 p-2 outline-none resize-none" rows={2} placeholder="Video caption or description..." />
+                        <div className="space-y-4">
+                          <div className="flex gap-2">
+                            <input type="text" value={block.url || ''} onChange={(e) => updateBlock(index, 'url', e.target.value)} className="flex-1 text-sm border-gray-300 rounded-md focus:border-blue-500 p-2 outline-none" placeholder="Video URL (YouTube embed link, mp4, etc. or upload ->)" />
+                            <label className="px-3 py-2 bg-slate-100 border border-gray-200 rounded-md cursor-pointer hover:bg-slate-200 flex items-center text-sm">
+                              <Upload size={14} className="mr-1" /> Upload
+                              <input type="file" className="hidden" accept="video/*" onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const url = await handleImageUpload(file);
+                                  if (url) updateBlock(index, 'url', url);
+                                }
+                              }} />
+                            </label>
+                          </div>
+                          <textarea value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full border-gray-200 rounded-md text-sm bg-slate-50 p-2 outline-none resize-none focus:border-blue-500" rows={2} placeholder="Video caption or description..." />
                         </div>
                       )}
                     </div>
