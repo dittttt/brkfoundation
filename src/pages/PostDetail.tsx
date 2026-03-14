@@ -80,78 +80,122 @@ export default function PostDetail({ type }: PostDetailProps) {
 
   return (
     <MainLayout>
-      <Section bg="white">
-        <div className="max-w-4xl mx-auto py-10">
-          {/* Year & Date */}
+      {/* Banner Header instead of inline image */}
+      <div className="relative w-full h-[40vh] min-h-[350px] bg-dark flex flex-col justify-end">
+        {post.image_url && (
+          <div className="absolute inset-0 z-0">
+            <img
+              src={post.image_url}
+              alt={post.title}
+              className="w-full h-full object-cover opacity-60"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/60 to-transparent" />
+          </div>
+        )}
+        
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 pb-12">
           <div className="mb-4 flex items-center gap-4">
-            <span className="text-primary text-sm font-bold uppercase tracking-wider">{yearStr}</span>
-            <span className="text-gray-400 text-sm uppercase tracking-wider font-bold">{type}</span>
+            <span className="text-secondary text-sm font-bold uppercase tracking-wider">{yearStr}</span>
+            <span className="text-gray-300 text-sm uppercase tracking-wider font-bold">{type}</span>
           </div>
 
-          {/* Title */}
-          <h1 className="text-3xl md:text-4xl font-display font-black text-dark leading-tight mb-4">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-black text-white leading-tight mb-2">
             {post.title}
           </h1>
+        </div>
+      </div>
 
+      <Section bg="white" className="pt-0 -mt-10 relative z-20">
+        <div className="max-w-4xl mx-auto bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-gray-100">
           {/* Metadata: Date, Views, Last Updated */}
-          <div className="flex flex-wrap items-center gap-6 text-gray-500 text-sm font-medium mb-10 pb-6 border-b border-gray-200">
-            <div className="flex items-center gap-2">
-              <span>Published: {dateStr}</span>
-            </div>
-            {post.updated_at && post.updated_at !== post.created_at && (
+          <div className="flex flex-wrap items-center justify-between gap-6 text-gray-500 text-sm font-medium mb-12 pb-6 border-b border-gray-100">
+            <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
-                <Clock size={16} />
-                <span>Last updated: {updatedDateStr}</span>
+                <span>Published: {dateStr}</span>
               </div>
-            )}
-            <div className="flex items-center gap-2">
+              {post.updated_at && post.updated_at !== post.created_at && (
+                <div className="flex items-center gap-2">
+                  <Clock size={16} />
+                  <span>Last updated: {updatedDateStr}</span>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full">
               <Eye size={16} />
               <span>{post.views || 0} views</span>
             </div>
           </div>
 
-          {/* Featured Image */}
-          {post.image_url && (
-            <div className="mb-10">
-              <img
-                src={post.image_url}
-                alt={post.title}
-                className="w-full rounded-xl object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-          )}
-
           {/* Content */}
-          <div className="prose max-w-none text-gray-700 leading-relaxed mb-16 text-lg">
+          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed font-sans mb-16">
+            {type === 'news' && post.content && (
+              <div dangerouslySetInnerHTML={{ __html: post.content }} className="mb-10" />
+            )}
+            
             {type === 'news' ? (
-              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+              <div className="space-y-10">
+                {(post.images_data || []).map((block: any, idx: number) => (
+                  <div key={block.id || idx}>
+                    {block.type === 'text' && (
+                      <div>
+                         <div dangerouslySetInnerHTML={{ __html: block.content || '' }} />
+                         {block.description && (
+                           <p className="text-sm text-gray-400 italic mt-2 border-l-2 border-gray-200 pl-3">{block.description}</p>
+                         )}
+                      </div>
+                    )}
+                    
+                    {(block.type === 'image' || block.type === 'media' || !block.type) && block.url && !block.url.includes('<iframe') && !block.url.endsWith('.mp4') && (
+                      <figure className="my-8">
+                        <img src={block.url} alt={block.description || ''} className="w-full rounded-2xl bg-gray-50 max-h-[700px] object-cover" referrerPolicy="no-referrer" />
+                        {block.description && (
+                          <figcaption className="text-center text-gray-500 font-medium italic mt-3 text-base">{block.description}</figcaption>
+                        )}
+                      </figure>
+                    )}
+
+                    {(block.type === 'video' || block.type === 'media') && block.url && (block.url.includes('<iframe') || block.url.endsWith('.mp4') || block.url.includes('youtube')) && (
+                       <figure className="my-8">
+                         {(block.url || '').includes('<iframe') ? (
+                            <div dangerouslySetInnerHTML={{ __html: block.url }} className="w-full rounded-2xl overflow-hidden aspect-video shadow-md" />
+                         ) : (
+                            <video src={block.url} controls className="w-full rounded-2xl bg-black shadow-md aspect-video" />
+                         )}
+                         {block.description && (
+                          <figcaption className="text-center text-gray-500 font-medium italic mt-3 text-base">{block.description}</figcaption>
+                         )}
+                       </figure>
+                    )}
+                  </div>
+                ))}
+              </div>
             ) : (
-              <p>{post.description}</p>
+              // For Legacy Gallery format handling if needed
+              <>
+                <p>{post.description}</p>
+                {post.images_data && post.images_data.length > 0 && (
+                  <div className="mt-16 space-y-12">
+                    <h3 className="text-2xl font-bold border-b pb-4">Gallery</h3>
+                    {post.images_data.map((img: any, idx: number) => (
+                      <div key={idx} className="flex flex-col gap-4">
+                        {img.url && (
+                          <img
+                            src={img.url}
+                            alt={img.description || `Gallery image ${idx + 1}`}
+                            className="w-full rounded-2xl object-cover bg-gray-50 max-h-[600px]"
+                            referrerPolicy="no-referrer"
+                          />
+                        )}
+                        {img.description && (
+                          <p className="text-center text-gray-500 font-medium italic">{img.description}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
-
-          {/* Additional Gallery Images */}
-          {post.images_data && post.images_data.length > 0 && (
-            <div className="mb-16 space-y-12">
-              <h3 className="text-2xl font-bold border-b pb-4">Gallery</h3>
-              {post.images_data.map((img: any, idx: number) => (
-                <div key={idx} className="flex flex-col gap-4">
-                  {img.url && (
-                    <img 
-                      src={img.url} 
-                      alt={img.description || `Gallery image ${idx + 1}`} 
-                      className="w-full rounded-2xl object-cover bg-gray-50 max-h-[600px]"
-                      referrerPolicy="no-referrer"
-                    />
-                  )}
-                  {img.description && (
-                    <p className="text-center text-gray-500 font-medium italic">{img.description}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
 
           {/* Previous / Next Navigation */}
           <div className="border-t border-gray-200 pt-6">

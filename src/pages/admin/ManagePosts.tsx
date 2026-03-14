@@ -1,12 +1,13 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical } from 'lucide-react';
-import ReactQuill from 'react-quill';
+import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
 import 'react-quill/dist/quill.snow.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface NewsBlock {
   id: string;
-  type: 'text' | 'image' | 'video';
+  type: 'text' | 'image' | 'video' | 'media';
   content?: string;
   url?: string;
   description?: string;
@@ -38,6 +39,7 @@ export default function ManagePosts() {
   const [loading, setLoading] = useState(true);
   const [editingPost, setEditingPost] = useState<NewsPost | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -180,7 +182,7 @@ export default function ManagePosts() {
     }
   };
 
-  const addBlock = (type: 'text' | 'image' | 'video') => {
+  const addBlock = (type: 'text' | 'image' | 'video' | 'media') => {
     if (!editingPost) return;
     const newBlock: NewsBlock = {
       id: Math.random().toString(36).substr(2, 9),
@@ -250,12 +252,12 @@ export default function ManagePosts() {
           {/* LEFT: Editor Column */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             {/* Header / Cover */}
-            <div className="p-6 space-y-4 bg-slate-50 border-b border-gray-100">
-              <label className="block text-sm font-bold text-gray-700">Cover Image URL</label>
-              <div className="flex gap-2">
-                <input type="text" value={editingPost.image_url} onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })} className="flex-1 w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-4 py-2" placeholder="Paste image URL here..." />
-                <label className="px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 text-sm font-medium flex items-center">
-                  <Upload className="w-4 h-4 mr-2" /> Upload
+            <div className="p-6 bg-slate-50 border-b border-gray-100">
+              <label className="block text-sm font-bold text-gray-700 mb-2">Cover Image</label>
+              <div className="flex items-center gap-2 border-2 border-dashed border-gray-300 p-2 rounded-xl bg-white focus-within:border-blue-500 focus-within:bg-blue-50 transition-colors">
+                <input type="text" value={editingPost.image_url} onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })} className="flex-1 w-full bg-transparent border-none shadow-none focus:ring-0 text-sm px-2 py-1 outline-none" placeholder="Paste image URL here or upload right ->" />
+                <label className="p-2 bg-gray-100 text-gray-600 rounded-lg cursor-pointer hover:bg-blue-100 hover:text-blue-600 transition flex items-center justify-center" title="Upload cover image">
+                  <Upload size={18} />
                   <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (file) {
@@ -269,8 +271,37 @@ export default function ManagePosts() {
 
             <div className="p-6 md:p-8 space-y-6">
               {/* Title & Metadata */}
-              <div>
-                <textarea value={editingPost.title} onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })} className="w-full text-3xl font-bold text-gray-900 border-none p-0 resize-none focus:ring-0 bg-transparent outline-none m-0 focus:outline-none" rows={2} placeholder="Post Title..." />
+              <div className="space-y-4">
+                <input 
+                  type="text" 
+                  value={editingPost.title} 
+                  onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })} 
+                  className="w-full text-2xl font-black text-gray-900 border-2 border-transparent hover:border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 rounded-xl px-4 py-3 transition-all outline-none" 
+                  placeholder="Enter Post Title..." 
+                />
+                
+                {/* Dates */}
+                <div className="flex flex-col sm:flex-row gap-4 px-4">
+                  <div className="flex-1 flex flex-col gap-1">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Published On</label>
+                    <input 
+                      type="date" 
+                      value={editingPost.created_at ? new Date(editingPost.created_at).toISOString().split('T')[0] : ''}
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          setEditingPost({ ...editingPost, created_at: new Date(e.target.value).toISOString() });
+                        }
+                      }}
+                      className="border-gray-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm px-3 py-2"
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col gap-1">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Modified / Updated On</label>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg text-sm px-3 py-2 text-gray-500 font-medium">
+                      {editingPost.id ? 'Auto-updated on save' : 'Not saved yet'}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <hr className="border-gray-100" />
@@ -279,34 +310,65 @@ export default function ManagePosts() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">Content Blocks</h3>
+                  <div className="relative">
+                    <button onClick={() => setDropdownOpen(!dropdownOpen)} className="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded-full hover:bg-blue-700 shadow-sm transition-transform active:scale-95">
+                      <Plus className="w-5 h-5" />
+                    </button>
+                    <AnimatePresence>
+                      {dropdownOpen && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                          className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden z-30"
+                        >
+                          <div className="p-1">
+                            <button onClick={() => { addBlock('text'); setDropdownOpen(false); }} className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg flex items-center">
+                              <Type className="w-4 h-4 mr-2" /> Text Block
+                            </button>
+                            <button onClick={() => { addBlock('media'); setDropdownOpen(false); }} className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg flex items-center mt-1">
+                              <ImageIcon className="w-4 h-4 mr-2" /> Media (Image/Video)
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
                 
-                {(editingPost.images_data || []).map((block, index) => (
-                  <div key={block.id} 
-                       onDragOver={handleDragOver}
-                       onDrop={(e) => handleDrop(e, index)}
-                       className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-sm group transition-all hover:border-blue-300 hover:shadow-md">
-                    
-                    <div className="absolute top-4 right-4 flex items-center gap-2 opacity-100 z-10 bg-white p-1 rounded-lg border border-gray-50 shadow-sm">
-                      <div draggable 
-                           onDragStart={(e) => handleDragStart(e, index)}
-                           className="cursor-grab hover:bg-gray-100 p-1.5 rounded-md text-gray-400 active:cursor-grabbing transition-colors" 
-                           title="Drag to reorder">
-                        <GripVertical className="w-4 h-4" />
+                <AnimatePresence>
+                  {(editingPost.images_data || []).map((block, index) => (
+                    <motion.div 
+                         layout
+                         initial={{ opacity: 0, y: 20 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         exit={{ opacity: 0, height: 0, overflow: 'hidden', margin: 0, padding: 0 }}
+                         transition={{ duration: 0.2 }}
+                         key={block.id} 
+                         onDragOver={handleDragOver}
+                         onDrop={(e) => handleDrop(e, index)}
+                         className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-sm group transition-all hover:border-blue-300 hover:shadow-md mb-6">
+                      
+                      <div className="absolute top-4 right-4 flex items-center gap-2 opacity-100 z-10 bg-white p-1 rounded-lg border border-gray-50 shadow-sm">
+                        <div draggable 
+                             onDragStart={(e) => handleDragStart(e, index)}
+                             className="cursor-grab hover:bg-gray-100 p-1.5 rounded-md text-gray-400 active:cursor-grabbing transition-colors" 
+                             title="Drag to reorder">
+                          <GripVertical className="w-4 h-4" />
+                        </div>
+                        <div className="w-px h-4 bg-gray-200"></div>
+                        <button onClick={() => removeBlock(index)} className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-md transition-colors" title="Delete block">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                      <div className="w-px h-4 bg-gray-200"></div>
-                      <button onClick={() => removeBlock(index)} className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-md transition-colors" title="Delete block">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
 
-                    <div className="pr-16">
-                      <div className="mb-4 flex items-center gap-2">
-                        {block.type === 'text' && <Type className="w-4 h-4 text-blue-500" />}
-                        {block.type === 'image' && <ImageIcon className="w-4 h-4 text-emerald-500" />}
-                        {block.type === 'video' && <Video className="w-4 h-4 text-purple-500" />}
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{block.type} Block</span>
-                      </div>
+                      <div className="pr-16">
+                        <div className="mb-4 flex items-center gap-2">
+                          {block.type === 'text' && <Type className="w-4 h-4 text-blue-500" />}
+                          {(block.type === 'image' || block.type === 'media') && <ImageIcon className="w-4 h-4 text-emerald-500" />}
+                          {block.type === 'video' && <Video className="w-4 h-4 text-purple-500" />}
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{block.type === 'image' || block.type === 'video' ? 'media' : block.type} Block</span>
+                        </div>
 
                       {block.type === 'text' && (
                         <div className="space-y-3">
@@ -356,12 +418,7 @@ export default function ManagePosts() {
                   </div>
                 ))}
                 
-                <div className="flex items-center gap-3 pt-4 justify-center">
-                  <span className="text-sm text-gray-500 font-medium">Add Block:</span>
-                  <button onClick={() => addBlock('text')} className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 text-sm font-medium"><Type className="w-4 h-4 mr-1.5" /> Text</button>
-                  <button onClick={() => addBlock('image')} className="flex items-center px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full hover:bg-emerald-100 text-sm font-medium"><ImageIcon className="w-4 h-4 mr-1.5" /> Image</button>
-                  <button onClick={() => addBlock('video')} className="flex items-center px-4 py-2 bg-purple-50 text-purple-700 rounded-full hover:bg-purple-100 text-sm font-medium"><Video className="w-4 h-4 mr-1.5" /> Video</button>
-                </div>
+                <div className="hidden">
               </div>
             </div>
           </div>
@@ -378,20 +435,37 @@ export default function ManagePosts() {
               <div className="w-10"></div>
             </div>
             
-            <div className="flex-1 overflow-y-auto bg-white p-6 md:p-10 pointer-events-none pb-20">
-              <div className="max-w-3xl mx-auto">
-                <div className="mb-4 flex items-center gap-4">
-                  <span className="text-blue-600 text-sm font-bold uppercase tracking-wider">
-                    {editingPost.created_at ? new Date(editingPost.created_at).getFullYear() : '2024'}
-                  </span>
-                  <span className="text-gray-400 text-sm uppercase tracking-wider font-bold">news</span>
+            <div className="flex-1 overflow-y-auto bg-white pointer-events-none pb-20 p-0 m-0">
+              
+              {/* Banner Header for Preview */}
+              <div className="relative w-full h-[300px] bg-slate-900 flex items-end justify-center mb-8">
+                {editingPost.image_url && (
+                  <div className="absolute inset-0 z-0">
+                    <img
+                      src={editingPost.image_url}
+                      alt={editingPost.title}
+                      className="w-full h-full object-cover opacity-50"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
+                  </div>
+                )}
+                
+                <div className="relative z-10 w-full max-w-3xl mx-auto px-6 pb-10 text-center">
+                  <div className="mb-3 flex items-center justify-center gap-4">
+                    <span className="text-blue-400 text-sm font-bold uppercase tracking-wider">
+                      {editingPost.created_at ? new Date(editingPost.created_at).getFullYear() : '2024'}
+                    </span>
+                    <span className="text-gray-300 text-sm uppercase tracking-wider font-bold">news</span>
+                  </div>
+
+                  <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                    {editingPost.title || 'Untitled Post'}
+                  </h1>
                 </div>
+              </div>
 
-                <h1 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-4">
-                  {editingPost.title || 'Untitled Post'}
-                </h1>
-
-                <div className="flex flex-wrap items-center gap-6 text-gray-500 text-sm font-medium mb-10 pb-6 border-b border-gray-200">
+              <div className="max-w-3xl mx-auto px-6 md:px-10">
+                <div className="flex flex-wrap items-center justify-center gap-6 text-gray-500 text-sm font-medium mb-10 pb-6 border-b border-gray-200">
                   <div className="flex items-center gap-2">
                     <span>Published: {editingPost.created_at ? new Date(editingPost.created_at).toLocaleDateString() : 'Draft'}</span>
                   </div>
@@ -401,13 +475,7 @@ export default function ManagePosts() {
                   </div>
                 </div>
 
-                {editingPost.image_url && (
-                  <div className="mb-10">
-                    <img src={editingPost.image_url} alt="Cover" className="w-full rounded-xl object-cover max-h-[500px]" />
-                  </div>
-                )}
-
-                <div className="prose max-w-none text-gray-700 leading-relaxed text-lg">
+                <div className="prose max-w-none text-gray-700 leading-relaxed text-lg pb-10">
                   {(editingPost.images_data || []).map((block) => (
                     <div key={block.id} className="mb-10">
                       {block.type === 'text' && (
@@ -419,7 +487,7 @@ export default function ManagePosts() {
                         </div>
                       )}
                       
-                      {block.type === 'image' && block.url && (
+                      {(block.type === 'image' || block.type === 'media') && block.url && !block.url.includes('<iframe') && !block.url.endsWith('.mp4') && (
                         <figure className="my-6">
                           <img src={block.url} alt={block.description || ''} className="w-full rounded-xl bg-gray-50 max-h-[600px] object-cover" />
                           {block.description && (
@@ -428,12 +496,12 @@ export default function ManagePosts() {
                         </figure>
                       )}
 
-                      {block.type === 'video' && block.url && (
+                      {(block.type === 'video' || block.type === 'media') && block.url && (block.url.includes('<iframe') || block.url.endsWith('.mp4') || block.url.includes('youtube')) && (
                          <figure className="my-6">
                            {(block.url || '').includes('<iframe') ? (
-                              <div dangerouslySetInnerHTML={{ __html: block.url }} className="w-full rounded-xl overflow-hidden aspect-video" />
+                              <div dangerouslySetInnerHTML={{ __html: block.url }} className="w-full rounded-xl overflow-hidden aspect-video shadow-md" />
                            ) : (
-                              <video src={block.url} controls className="w-full rounded-xl bg-black" />
+                              <video src={block.url} controls className="w-full rounded-xl bg-black shadow-md aspect-video" />
                            )}
                            {block.description && (
                             <figcaption className="text-center text-gray-500 font-medium italic mt-3 text-base">{block.description}</figcaption>
