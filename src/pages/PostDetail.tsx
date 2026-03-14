@@ -114,7 +114,7 @@ export default function PostDetail({ type }: PostDetailProps) {
 
         {/* Banner Overlays */}
         <div className="relative z-10 w-full px-4 md:px-6 pb-20 md:pb-24">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto px-6 md:px-8">
             <div className="flex items-center gap-3">
               <span className="text-secondary text-xs md:text-sm font-bold uppercase tracking-widest">{yearStr}</span>
               <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-secondary"></span>
@@ -244,39 +244,16 @@ export default function PostDetail({ type }: PostDetailProps) {
             )}
           </div>
 
-          {/* Previous / Next Navigation */}
-          <div className="border-t border-gray-200 pt-6">
-            <div className="flex items-stretch gap-4">
-              <Link
-                to={prevPost.link}
-                className="flex-1 flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group"
-              >
-                <ChevronLeft size={20} className="text-gray-400 group-hover:text-primary shrink-0" />
-                <div className="min-w-0">
-                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Return</div>
-                  <div className="text-sm font-bold text-dark group-hover:text-primary transition-colors line-clamp-2">
-                    {prevPost.title}
-                  </div>
-                </div>
-              </Link>
-
-              <Link
-                to={nextPost.link}
-                className="flex-1 flex items-center justify-end gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group text-right"
-              >
-                <div className="min-w-0">
-                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Return</div>
-                  <div className="text-sm font-bold text-dark group-hover:text-primary transition-colors line-clamp-2">
-                    {nextPost.title}
-                  </div>
-                </div>
-                <ChevronRight size={20} className="text-gray-400 group-hover:text-primary shrink-0" />
+{/* Back to list */}
+            <div className="border-t border-gray-200 mt-12 pt-8">
+              <Link to="/updates" className="inline-flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-wider">
+                <ChevronLeft size={16} /> Back to list
               </Link>
             </div>
           </div>
         </div>
       </div>
-      </div>
     </MainLayout>
   );
 }
+  
