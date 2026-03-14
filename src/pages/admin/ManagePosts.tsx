@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown, Search, ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { DropdownFilter } from '../../components/ui';
@@ -37,9 +37,10 @@ const QUILL_MODULES = {
 };
 
 export default function ManagePosts() {
+  const [posts, setPosts] = useState<NewsPost[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollArrows, setShowScrollArrows] = useState(false);
-  
+
   useEffect(() => {
     const checkOverflow = () => {
       if (scrollContainerRef.current) {
@@ -47,10 +48,16 @@ export default function ManagePosts() {
         setShowScrollArrows(scrollWidth > clientWidth);
       }
     };
+    
     checkOverflow();
     window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
-  }, [years]);
+    const timeoutId = setTimeout(checkOverflow, 100);
+    
+    return () => {
+      window.removeEventListener('resize', checkOverflow);
+      clearTimeout(timeoutId);
+    };
+  }, [posts]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -62,7 +69,6 @@ export default function ManagePosts() {
     }
   };
 
-  const [posts, setPosts] = useState<NewsPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingPost, setEditingPost] = useState<NewsPost | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -641,7 +647,7 @@ const getRelativeTime = (date: string | null) => {
       return 0;
     });
 
-  const years = ['All', ...Array.from(new Set(posts.map(p => new Date(p.created_at).getFullYear().toString())))].sort((a, b) => b.localeCompare(a));
+  const years = ['All', ...Array.from(new Set(posts.map(p => new Date(p.created_at).getFullYear().toString())))].sort((a: any, b: any) => b.localeCompare(a));
 
   return (
     <div className="max-w-[90rem] mx-auto py-10 px-4 sm:px-6 lg:px-8">
