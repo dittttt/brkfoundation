@@ -100,7 +100,7 @@ export default function PostDetail({ type }: PostDetailProps) {
     <MainLayout>
       {/* Banner Header instead of inline image */}
       <div className="w-full bg-gray-50 pt-20">
-        <div className="relative w-full aspect-[21/9] bg-dark flex flex-col justify-end overflow-hidden">
+        <div className="relative w-full h-[50vh] min-h-[400px] bg-dark flex flex-col justify-end overflow-hidden">
         {post.image_url && (
           <div className="absolute inset-0 z-0">
             <img
@@ -113,11 +113,13 @@ export default function PostDetail({ type }: PostDetailProps) {
         )}
 
         {/* Banner Overlays */}
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-10 md:px-12 pb-20">
-          <div className="flex items-center gap-3">
-            <span className="text-secondary text-xs md:text-sm font-bold uppercase tracking-widest">{yearStr}</span>
-            <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-secondary"></span>
-            <span className="text-white text-xs md:text-sm uppercase tracking-widest font-bold">{type}</span>
+        <div className="relative z-10 w-full px-4 md:px-6 pb-20 md:pb-24">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-3">
+              <span className="text-secondary text-xs md:text-sm font-bold uppercase tracking-widest">{yearStr}</span>
+              <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-secondary"></span>
+              <span className="text-white text-xs md:text-sm uppercase tracking-widest font-bold">{type}</span>
+            </div>
           </div>
         </div>
       </div>
