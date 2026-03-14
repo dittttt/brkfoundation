@@ -1,162 +1,409 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit2, Trash2, X, Save } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, GripVertical, Save, X, Eye } from 'lucide-react';
+
+interface NewsImage {
+  url: string;
+  description: string;
+}
+
+interface NewsPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  created_at: string;
+  image_url: string;
+  views: number;
+  images_data: NewsImage[];
+}
 
 export default function ManageNews() {
-  const [news, setNews] = useState<any[]>([]);
+  const [posts, setPosts] = useState<NewsPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  
-  // Form state
-  const [formData, setFormData] = useState({
-    title: '', slug: '', excerpt: '', content: '', image_url: '', created_at: ''
-  });
+  const [editingPost, setEditingPost] = useState<NewsPost | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    fetchNews();
+    fetchPosts();
   }, []);
 
-  const fetchNews = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from('news').select('*').order('created_at', { ascending: false });
-    if (!error && data) setNews(data);
-    setLoading(false);
-  };
-
-  const handleEdit = (item: any) => {
-    setEditingId(item.id);
-    setFormData({
-      title: item.title,
-      slug: item.slug,
-      excerpt: item.excerpt || '',
-      content: item.content || '',
-      image_url: item.image_url || '',
-      created_at: new Date(item.created_at).toISOString().slice(0, 16) // Format for datetime-local
-    });
-  };
-
-  const handleCancel = () => {
-    setEditingId(null);
-    setFormData({ title: '', slug: '', excerpt: '', content: '', image_url: '', created_at: '' });
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const payload = {
-      ...formData,
-      updated_at: new Date().toISOString()
-    };
-
-    if (editingId === 'new') {
-      await supabase.from('news').insert([payload]);
-    } else {
-      await supabase.from('news').update(payload).eq('id', editingId);
+  const fetchPosts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('news')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setPosts(data || []);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    } finally {
+      setLoading(false);
     }
-    
-    handleCancel();
-    fetchNews();
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this news post?')) {
-      await supabase.from('news').delete().eq('id', id);
-      fetchNews();
+    if (!window.confirm('Are you sure you want to delete this news post?')) return;
+    try {
+      const { error } = await supabase.from('news').delete().eq('id', id);
+      if (error) throw error;
+      setPosts(posts.filter(p => p.id !== id));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      alert('Error deleting post');
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  const handleCreateNew = () => {
+    const newPost: NewsPost = {
+      id: '',
+      title: 'New Post Title',
+      slug: 'new-post-title',
+      content: 'Start writing your content here...',
+      created_at: new Date().toISOString().split('T')[0],
+      image_url: '',
+      views: 0,
+      images_data: []
+    };
+    setEditingPost(newPost);
+  };
 
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-black text-dark">Manage News</h1>
-        {!editingId && (
+  const handleSave = async () => {
+    if (!editingPost) return;
+    setIsUpdating(true);
+    try {
+      const postData = {
+        title: editingPost.title,
+        slug: editingPost.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+        content: editingPost.content,
+        created_at: new Date(editingPost.created_at).toISOString(),
+        updated_at: new Date().toISOString(),
+        image_url: editingPost.image_url,
+        images_data: editingPost.images_data || []
+      };
+
+      if (editingPost.id) {
+        const { error } = await supabase.from('news').update(postData).eq('id', editingPost.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('news').insert([postData]);
+        if (error) throw error;
+      }
+      
+      await fetchPosts();
+      setEditingPost(null);
+    } catch (error) {
+      console.error('Error saving post:', error);
+      alert('Error saving post');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Drag and drop handlers for images_data
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    // Firefox requires setting data
+    e.dataTransfer.setData('text/html', e.currentTarget.parentNode as any);
+    e.dataTransfer.setDragImage(e.currentTarget.parentNode as Element, 20, 20);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (draggedIndex === null || draggedIndex === index || !editingPost) return;
+
+    const newImages = [...(editingPost.images_data || [])];
+    const draggedItem = newImages[draggedIndex];
+    newImages.splice(draggedIndex, 1);
+    newImages.splice(index, 0, draggedItem);
+    
+    setEditingPost({ ...editingPost, images_data: newImages });
+    setDraggedIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
+  const updateImageItem = (index: number, field: keyof NewsImage, value: string) => {
+    if (!editingPost) return;
+    const newImages = [...(editingPost.images_data || [])];
+    newImages[index] = { ...newImages[index], [field]: value };
+    setEditingPost({ ...editingPost, images_data: newImages });
+  };
+
+  const addImageItem = () => {
+    if (!editingPost) return;
+    const newImages = [...(editingPost.images_data || []), { url: '', description: '' }];
+    setEditingPost({ ...editingPost, images_data: newImages });
+  };
+
+  const removeImageItem = (index: number) => {
+    if (!editingPost) return;
+    const newImages = [...(editingPost.images_data || [])];
+    newImages.splice(index, 1);
+    setEditingPost({ ...editingPost, images_data: newImages });
+  };
+
+  if (loading) return <div className="p-8 text-center text-gray-500">Loading news...</div>;
+
+  if (editingPost) {
+    return (
+      <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {/* Editor Toolbar */}
+        <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-4 z-10">
           <button 
-            onClick={() => {
-              setEditingId('new');
-              setFormData({ title: '', slug: '', excerpt: '', content: '', image_url: '', created_at: new Date().toISOString().slice(0, 16) });
-            }}
-            className="bg-primary text-white px-6 py-2 rounded-xl font-bold flex items-center gap-2"
+            onClick={() => setEditingPost(null)}
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
-            <Plus size={20} /> Add News
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to List
           </button>
-        )}
+          <div className="flex gap-3">
+            <button 
+              onClick={handleSave}
+              disabled={isUpdating}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 disabled:opacity-50"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {isUpdating ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
+
+        {/* Preview-like Editor Area */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          {/* Main Image Header */}
+          <div className="relative h-[400px] bg-slate-100 group">
+            {editingPost.image_url ? (
+              <img 
+                src={editingPost.image_url} 
+                alt="Post header cover" 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-slate-400">
+                <ImageIcon className="w-16 h-16 mb-4 opacity-50" />
+                <p>No featured image</p>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="bg-white p-4 rounded-xl shadow-lg w-full max-w-md mx-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image URL</label>
+                <input
+                  type="text"
+                  value={editingPost.image_url}
+                  onChange={(e) => setEditingPost({ ...editingPost, image_url: e.target.value })}
+                  className="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 md:p-12">
+            {/* Metadata Row */}
+            <div className="flex items-center gap-6 text-gray-500 text-sm mb-6">
+              <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200">
+                <Calendar className="w-4 h-4" />
+                <input
+                  type="date"
+                  value={editingPost.created_at.split('T')[0]}
+                  onChange={(e) => setEditingPost({ ...editingPost, created_at: e.target.value })}
+                  className="bg-transparent border-none p-0 focus:ring-0 text-sm w-32 cursor-pointer focus:outline-none"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                <span>{editingPost.views || 0} views</span>
+              </div>
+            </div>
+
+            {/* Title */}
+            <textarea
+              value={editingPost.title}
+              onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })}
+              className="w-full text-4xl md:text-5xl font-bold text-gray-900 border-none p-0 resize-none focus:ring-0 mb-8 bg-transparent"
+              rows={2}
+              placeholder="Post Title..."
+            />
+
+            {/* Content */}
+            <div className="prose prose-blue max-w-none mb-12">
+              <textarea
+                value={editingPost.content}
+                onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+                className="w-full h-auto min-h-[300px] border-none p-0 focus:ring-0 text-lg leading-relaxed text-gray-700 resize-y bg-transparent"
+                placeholder="Write the full news story here..."
+              />
+            </div>
+
+            {/* Custom Gallery Builder (images_data) */}
+            <div className="mt-12 pt-8 border-t border-gray-100">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Additional Gallery Images</h3>
+                  <p className="text-sm text-gray-500 mt-1">Add images that will appear in the article body</p>
+                </div>
+                <button
+                  onClick={addImageItem}
+                  className="flex items-center px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Image
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {(editingPost.images_data || []).map((img, index) => (
+                  <div 
+                    key={index}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDragEnd={handleDragEnd}
+                    className={`flex items-start gap-4 p-4 bg-white border rounded-xl transition-all ${
+                      draggedIndex === index ? 'opacity-50 border-blue-400 bg-blue-50/50' : 'border-gray-200 hover:border-gray-300 shadow-sm'
+                    }`}
+                  >
+                    <div 
+                      className="mt-1 cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 rounded"
+                    >
+                      <GripVertical className="w-5 h-5" />
+                    </div>
+                    
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Image URL</label>
+                        <input
+                          type="text"
+                          value={img.url}
+                          onChange={(e) => updateImageItem(index, 'url', e.target.value)}
+                          className="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-slate-50"
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Description/Caption</label>
+                        <input
+                          type="text"
+                          value={img.description}
+                          onChange={(e) => updateImageItem(index, 'description', e.target.value)}
+                          className="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm bg-slate-50"
+                          placeholder="Image caption..."
+                        />
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={() => removeImageItem(index)}
+                      className="mt-6 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Remove image"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+                {(!editingPost.images_data || editingPost.images_data.length === 0) && (
+                  <div className="text-center py-10 border-2 border-dashed border-gray-200 rounded-xl bg-slate-50/50 text-gray-500">
+                    <ImageIcon className="w-8 h-8 mx-auto mb-3 opacity-20" />
+                    <p>No additional images added yet.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Modern List View
+  return (
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Manage News</h1>
+          <p className="mt-2 text-sm text-gray-500">Create, edit, and organize news articles</p>
+        </div>
+        <button
+          onClick={handleCreateNew}
+          className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-150 shadow-sm font-medium"
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Create New Post
+        </button>
       </div>
 
-      {editingId ? (
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold mb-6">{editingId === 'new' ? 'Create News Post' : 'Edit News Post'}</h2>
-          <form onSubmit={handleSave} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-bold mb-1">Title</label>
-                <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full border rounded-lg p-2" />
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+        {posts.map((post) => (
+          <div key={post.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
+            <div className="flex flex-col sm:flex-row h-full">
+              <div className="sm:w-48 h-48 sm:h-auto relative shrink-0 bg-slate-100">
+                {post.image_url ? (
+                  <img src={post.image_url} alt={post.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-slate-300" />
+                  </div>
+                )}
               </div>
-              <div>
-                <label className="block text-sm font-bold mb-1">Slug</label>
-                <input type="text" required value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full border rounded-lg p-2" />
+              
+              <div className="p-6 flex flex-col flex-grow">
+                <div className="flex items-center gap-4 text-xs font-medium text-gray-500 mb-3">
+                  <span className="flex items-center bg-slate-100 px-2.5 py-1 rounded-md">
+                    <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                    {new Date(post.date).toLocaleDateString()}
+                  </span>
+                  <span className="flex items-center text-slate-400">
+                    <Eye className="w-3.5 h-3.5 mr-1" />
+                    {post.views || 0}
+                  </span>
+                </div>
+                
+                <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
+                  {post.title}
+                </h3>
+                
+                <p className="text-gray-500 text-sm line-clamp-2 mb-6 flex-grow">
+                  {post.content}
+                </p>
+                
+                <div className="flex justify-end items-center gap-2 pt-4 border-t border-gray-50 mt-auto">
+                  <button
+                    onClick={() => setEditingPost(post)}
+                    className="flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(post.id)}
+                    className="flex items-center p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete post"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-bold mb-1">Image URL</label>
-                <input type="url" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} className="w-full border rounded-lg p-2" />
-              </div>
-              <div>
-                <label className="block text-sm font-bold mb-1">Created Date</label>
-                <input type="datetime-local" required value={formData.created_at} onChange={e => setFormData({...formData, created_at: e.target.value})} className="w-full border rounded-lg p-2" />
-              </div>
+          </div>
+        ))}
+        {posts.length === 0 && (
+          <div className="col-span-full py-20 text-center bg-white rounded-2xl border border-dashed border-gray-200">
+            <div className="mx-auto w-16 h-16 bg-slate-50 flex items-center justify-center rounded-full mb-4">
+              <ImageIcon className="w-8 h-8 text-slate-400" />
             </div>
-
-            <div>
-              <label className="block text-sm font-bold mb-1">Excerpt</label>
-              <textarea value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} className="w-full border rounded-lg p-2" rows={2} />
-            </div>
-
-            <div>
-              <label className="block text-sm font-bold mb-1">Content (HTML allowed)</label>
-              <textarea required value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full border rounded-lg p-2" rows={8} />
-            </div>
-
-            <div className="flex gap-4 pt-4">
-              <button type="button" onClick={handleCancel} className="px-6 py-2 rounded-xl font-bold bg-gray-100 text-gray-700 flex items-center gap-2">
-                <X size={20} /> Cancel
-              </button>
-              <button type="submit" className="px-6 py-2 rounded-xl font-bold bg-primary text-white flex items-center gap-2">
-                <Save size={20} /> Save Post
-              </button>
-            </div>
-          </form>
-        </div>
-      ) : (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-100">
-              <tr>
-                <th className="p-4 font-bold text-gray-500">Title</th>
-                <th className="p-4 font-bold text-gray-500">Date</th>
-                <th className="p-4 font-bold text-gray-500">Views</th>
-                <th className="p-4 font-bold text-gray-500 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {news.map(item => (
-                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="p-4 font-medium text-dark">{item.title}</td>
-                  <td className="p-4 text-gray-500">{new Date(item.created_at).toLocaleDateString()}</td>
-                  <td className="p-4 text-gray-500">{item.views || 0}</td>
-                  <td className="p-4 justify-end flex gap-2">
-                    <button onClick={() => handleEdit(item)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
-                    <button onClick={() => handleDelete(item.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={18} /></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {news.length === 0 && <div className="p-8 text-center text-gray-500">No news found.</div>}
-        </div>
-      )}
+            <h3 className="text-lg font-medium text-gray-900 mb-1">No news posts yet</h3>
+            <p className="text-gray-500">Get started by creating your first post.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -131,6 +131,28 @@ export default function PostDetail({ type }: PostDetailProps) {
             )}
           </div>
 
+          {/* Additional Gallery Images */}
+          {post.images_data && post.images_data.length > 0 && (
+            <div className="mb-16 space-y-12">
+              <h3 className="text-2xl font-bold border-b pb-4">Gallery</h3>
+              {post.images_data.map((img: any, idx: number) => (
+                <div key={idx} className="flex flex-col gap-4">
+                  {img.url && (
+                    <img 
+                      src={img.url} 
+                      alt={img.description || `Gallery image ${idx + 1}`} 
+                      className="w-full rounded-2xl object-cover bg-gray-50 max-h-[600px]"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
+                  {img.description && (
+                    <p className="text-center text-gray-500 font-medium italic">{img.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Previous / Next Navigation */}
           <div className="border-t border-gray-200 pt-6">
             <div className="flex items-stretch gap-4">
