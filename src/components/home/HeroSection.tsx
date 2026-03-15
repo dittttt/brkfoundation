@@ -48,7 +48,7 @@ export const HeroSection = () => {
             Non-Profit Organization
           </div>
           
-          <h1 className="text-[12vw] sm:text-[4.5rem] md:text-[6rem] lg:text-[8rem] xl:text-[9.5rem] font-display font-black text-white mb-3 sm:mb-6 leading-[0.85] tracking-tight uppercase drop-shadow-2xl flex flex-col items-center whitespace-nowrap">
+          <h1 className="text-[10vw] sm:text-[4rem] md:text-[5.5rem] lg:text-[7rem] xl:text-[8.5rem] font-display font-black text-white mb-3 sm:mb-6 leading-[0.85] tracking-tight uppercase drop-shadow-2xl flex flex-col items-center whitespace-nowrap">
             <span>Make Laughter</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-[#a7c4bc] to-amber-300">Last Forever</span>
           </h1>

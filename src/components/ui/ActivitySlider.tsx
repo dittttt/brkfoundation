@@ -17,7 +17,7 @@ interface ActivitySliderProps {
 export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
-      loop: true,
+      loop: activities.length > 3,
       align: 'start',
       skipSnaps: false,
       dragFree: true

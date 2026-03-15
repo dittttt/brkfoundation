@@ -339,7 +339,7 @@ export default function ManagePosts() {
       <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
         
         {/* Editor Toolbar */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-4 z-20">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-4 z-50">
             <button onClick={() => setEditingPost(null)} className="inline-flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-wider cursor-pointer">
               <ChevronLeft size={16} /> Back to List
           </button>
@@ -478,7 +478,9 @@ export default function ManagePosts() {
 
                       {block.type === 'text' && (
                         <div className="space-y-3">
-                          <ReactQuill theme="snow" value={block.content || ''} onChange={(val) => updateBlock(index, 'content', val)} className="bg-white" modules={QUILL_MODULES} />
+                          <div className="text-sm sm:text-base">
+                            <ReactQuill theme="snow" value={block.content || ''} onChange={(val) => updateBlock(index, 'content', val)} className="bg-white ql-text-sm" modules={QUILL_MODULES} />
+                          </div>
                           <input type="text" placeholder="Optional block description/notes..." value={block.description || ''} onChange={(e) => updateBlock(index, 'description', e.target.value)} className="w-full text-sm border-gray-200 rounded-md bg-slate-50 focus:border-blue-500 p-2 outline-none" />
                         </div>
                       )}
@@ -523,7 +525,7 @@ export default function ManagePosts() {
 
             <div className="flex-1 bg-gray-50 pointer-events-none p-0 m-0">
               {/* Banner Header for Preview */}
-              <div className="relative w-full aspect-[21/9] bg-dark flex flex-col justify-end overflow-hidden">
+              <div className="relative w-full h-[30vh] min-h-[250px] md:aspect-[21/9] md:h-auto bg-dark flex flex-col justify-end overflow-hidden">
                 {editingPost.image_url && (
                   <div className="absolute inset-0 z-0">
                     <img
@@ -548,7 +550,7 @@ export default function ManagePosts() {
 
               <div className="px-4 md:px-6 pt-0 -mt-12 relative z-20 pb-20">
                 <div className="bg-white rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100">
-                  <h1 className="text-2xl md:text-3xl font-display font-black text-gray-900 leading-tight mb-6">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-gray-900 leading-tight mb-4 md:mb-6">
                     {editingPost.title || 'Untitled Post'}
                   </h1>
 
@@ -649,95 +651,93 @@ export default function ManagePosts() {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm mb-8">
-        <div className="flex flex-col lg:flex-row gap-4 lg:items-center w-full">
-          <div className="flex items-center w-full lg:w-[300px] shrink-0 bg-slate-50 rounded-2xl overflow-hidden border border-transparent transition-all">
-            <div className="pl-4 pr-2 flex items-center justify-center text-gray-400">
-              <Search size={18} />
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-gray-100 shadow-sm mb-8">
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col lg:flex-row gap-4 lg:items-center w-full">
+            <div className="flex items-center w-full lg:w-[300px] shrink-0 bg-slate-50 rounded-2xl overflow-hidden border border-transparent transition-all">
+              <div className="pl-4 pr-2 flex items-center justify-center text-gray-400">
+                <Search size={18} />
+              </div>
+              <input
+                type="text"
+                placeholder="Search posts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium text-gray-700 placeholder-gray-400"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search posts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium text-gray-700 placeholder-gray-400"
-            />
-          </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-
-            <div className="flex items-center gap-2 flex-1 min-w-0 pr-4 overflow-hidden">
-              {showScrollArrows && (
-              <button
-                onClick={() => scroll('left')}
-                className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              )}
-
-              <div
-                ref={scrollContainerRef}
-                className="flex-1 overflow-x-auto flex gap-2 py-2 scroll-smooth snap-x min-w-0"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              >
-                <style>{`
-                  div::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
-                {years.map((year) => (
+            <div className="flex flex-row justify-between items-center w-full gap-2">
+              <div className="flex bg-slate-50 p-1.5 rounded-2xl overflow-x-auto min-w-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {['ALL', 'News', 'Gallery'].map(t => (
                   <button
-                    key={year}
-                    onClick={() => setFilterYear(year)}
-                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap snap-start shrink-0 ${
-                      filterYear === year
-                        ? 'bg-blue-600 text-white shadow-md border border-blue-600'
-                        : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-                    }`}
+                    key={t}
+                    onClick={() => setFilterType(t)}
+                    className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 ${filterType === t ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                   >
-                    {year === 'All' ? 'All Years' : year}
+                    {t}
                   </button>
                 ))}
               </div>
-
-              {showScrollArrows && (
-              <button
-                onClick={() => scroll('right')}
-                className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
-              >
-                <ChevronRight size={18} />
-              </button>
-              )}
+              
+              <div className="relative w-[130px] sm:w-[150px] shrink-0 z-40">
+                <DropdownFilter
+                  value={sortBy}
+                  onChange={setSortBy}
+                  options={[
+                    { value: 'latest', label: 'Latest' },
+                    { value: 'oldest', label: 'Oldest' },
+                    { value: 'updated', label: 'Last updated' },
+                    { value: 'views', label: 'Most Popular' }
+                  ]}
+                />
+              </div>
             </div>
+          </div>
 
+          <div className="flex items-center gap-2 w-full overflow-hidden">
+            {showScrollArrows && (
+            <button
+              onClick={() => scroll('left')}
+              className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            )}
 
-            <div className="flex bg-slate-50 p-1.5 rounded-2xl">
-              {['ALL', 'News', 'Gallery'].map(t => (
+            <div
+              ref={scrollContainerRef}
+              className="flex-1 overflow-x-auto flex gap-2 py-2 scroll-smooth snap-x min-w-0"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <style>{`
+                div::-webkit-scrollbar {
+                  display: none;
+                }
+              `}</style>
+              {years.map((year) => (
                 <button
-                  key={t}
-                  onClick={() => setFilterType(t)}
-                  className={`px-4 py-1.5 rounded-xl text-sm font-bold transition-all ${filterType === t ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  key={year}
+                  onClick={() => setFilterYear(year)}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap snap-start shrink-0 ${
+                    filterYear === year
+                      ? 'bg-blue-600 text-white shadow-md border border-blue-600'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  }`}
                 >
-                  {t}
+                  {year === 'All' ? 'All Years' : year}
                 </button>
               ))}
             </div>
 
-            
-            <div className="relative w-[150px] shrink-0 z-50">
-              <DropdownFilter
-                value={sortBy}
-                onChange={setSortBy}
-                options={[
-                  { value: 'latest', label: 'Latest' },
-                  { value: 'oldest', label: 'Oldest' },
-                  { value: 'updated', label: 'Last updated' },
-                  { value: 'views', label: 'Most Popular' }
-                ]}
-              />
-            </div>
-
+            {showScrollArrows && (
+            <button
+              onClick={() => scroll('right')}
+              className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
+            >
+              <ChevronRight size={18} />
+            </button>
+            )}
           </div>
         </div>
       </div>
@@ -745,28 +745,28 @@ export default function ManagePosts() {
       {loading ? (
         <div className="py-20 text-center font-bold text-gray-400">Loading posts...</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
           {filteredPosts.map((post) => (
-            <div key={post.id} className="bg-white rounded-[2rem] p-4 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
+            <div key={post.id} className="bg-white rounded-2xl sm:rounded-[2rem] p-3 sm:p-4 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
               
               {/* Image Block */}
-              <div className="w-full aspect-[4/3] rounded-[1.5rem] relative shrink-0 bg-slate-100 overflow-hidden mb-5">
+              <div className="w-full aspect-[4/3] rounded-xl sm:rounded-[1.5rem] relative shrink-0 bg-slate-100 overflow-hidden mb-3 sm:mb-5">
                 {post.image_url ? (
                   <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <ImageIcon className="w-10 h-10 text-slate-300" />
+                    <ImageIcon className="w-8 h-8 sm:w-10 sm:h-10 text-slate-300" />
                   </div>
                 )}
                 
                 {/* Badges */}
-                <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
-                  <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-dark shadow-sm">
+                <div className="absolute top-2 left-2 right-2 sm:top-4 sm:left-4 sm:right-4 flex justify-between items-start pointer-events-none">
+                  <div className="bg-white/90 backdrop-blur-sm px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-dark shadow-sm">
                     {post.tableType === 'news' ? 'News' : 'Gallery'}
                   </div>
                   {post.is_featured_news && post.tableType === 'news' && (
-                    <div className="bg-amber-400 text-white text-[10px] font-bold px-2 py-1.5 rounded-lg shadow-sm flex items-center gap-1 uppercase tracking-wider backdrop-blur-sm">
-                      <Star className="w-3 h-3 fill-current" />
+                    <div className="bg-amber-400 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-1 sm:px-2 sm:py-1.5 rounded-md sm:rounded-lg shadow-sm flex items-center gap-1 uppercase tracking-wider backdrop-blur-sm">
+                      <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" />
                       Featured
                     </div>
                   )}
@@ -774,25 +774,25 @@ export default function ManagePosts() {
               </div>
 
               {/* Content */}
-              <div className="flex flex-col flex-grow px-2">
-                <div className="flex items-center gap-4 text-[11px] font-bold text-gray-400 mb-3 uppercase tracking-wider">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" />
+              <div className="flex flex-col flex-grow px-1 sm:px-2 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-4 text-[9px] sm:text-[11px] font-bold text-gray-400 mb-2 sm:mb-3 uppercase tracking-wider truncate">
+                  <span className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                    <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     {new Date(post.created_at).toLocaleDateString()}
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5" />
+                  <span className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                    <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                     {post.views || 0}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-display font-black text-gray-900 mb-4 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+                <h3 className="text-sm sm:text-xl font-display font-black text-gray-900 mb-3 sm:mb-4 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
                   {post.title}
                 </h3>
 
-                <div className="mt-auto pt-4 border-t border-gray-50 flex flex-col gap-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex-1">
+                <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-50 flex flex-col gap-2 sm:gap-3">
+                  <div className="flex items-center justify-between gap-1 sm:gap-2">
+                    <div className="flex-1 min-w-0">
                         <DropdownFilter
                           value={post.tableType || 'news'}
                           onChange={(val) => movePostType(post, val as 'news' | 'gallery')}

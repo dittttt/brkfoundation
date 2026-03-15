@@ -158,7 +158,7 @@ export default function News() {
           <div className="py-10 text-center text-gray-500">Loading news...</div>
         ) : (
 <>
-            <div className="grid md:grid-cols-3 gap-10">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-10">
             {news.map((item, idx) => (
               <NewsCard key={idx} item={item} delay={idx * 0.1} />
             ))}

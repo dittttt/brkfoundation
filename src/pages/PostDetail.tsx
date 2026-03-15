@@ -86,7 +86,7 @@ export default function PostDetail({ type }: PostDetailProps) {
     <MainLayout>
       {/* Banner Header instead of inline image */}
       <div className="w-full bg-gray-50">
-        <div className="relative w-full h-[50vh] min-h-[400px] bg-dark flex flex-col justify-end overflow-hidden">
+        <div className="relative w-full h-[30vh] min-h-[250px] md:h-[50vh] md:min-h-[400px] bg-dark flex flex-col justify-end overflow-hidden">
         {post.image_url && (
           <div className="absolute inset-0 z-0">
             <img
@@ -118,7 +118,7 @@ export default function PostDetail({ type }: PostDetailProps) {
             </Link>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-black text-gray-900 leading-tight mb-4 md:mb-6">
             {post.title}
           </h1>
 
