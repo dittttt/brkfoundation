@@ -65,7 +65,7 @@ export default function AdminDashboard() {
           <h1 className="text-4xl font-display font-black text-dark tracking-tight mb-2">Welcome Back!</h1>
           <p className="text-gray-500 font-medium text-lg">Here's what's happening with BRK Foundation today.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <Link to="/admin/news" className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-primary/20">
             <Plus size={18} /> New Post
           </Link>
@@ -130,12 +130,12 @@ export default function AdminDashboard() {
               <div className="text-center py-8 text-gray-400 text-sm">No activity yet.</div>
             ) : (
               recentActivity.map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl transition-colors border border-transparent hover:border-gray-100">
-                  <div className="flex items-center gap-4">
+                <div key={i} className="flex items-center justify-between p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl transition-colors border border-transparent hover:border-gray-100 gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${item.type === 'News' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'}`}>
                       {item.type === 'News' ? <FileText size={18} /> : <ImageIcon size={18} />}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-bold text-dark text-sm md:text-base line-clamp-1">{item.title}</div>
                       <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
                         <span className="flex items-center gap-1"><Clock size={12} /> {new Date(item.created_at).toLocaleDateString()}</span>
@@ -143,7 +143,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-xs font-bold px-3 py-1 bg-white border border-gray-200 text-gray-600 rounded-full">
+                  <div className="text-xs font-bold px-3 py-1 bg-white border border-gray-200 text-gray-600 rounded-full shrink-0">
                     {item.type}
                   </div>
                 </div>

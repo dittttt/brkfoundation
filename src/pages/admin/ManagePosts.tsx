@@ -339,12 +339,12 @@ export default function ManagePosts() {
       <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
         
         {/* Editor Toolbar */}
-        <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-4 z-20">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-4 z-20">
             <button onClick={() => setEditingPost(null)} className="inline-flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-wider cursor-pointer">
               <ChevronLeft size={16} /> Back to List
           </button>
-          <button onClick={handleSave} disabled={isUpdating} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 disabled:opacity-50">
-            <Save className="w-4 h-4 mr-2" /> {isUpdating ? 'Saving...' : 'Save Changes'}
+          <button onClick={handleSave} disabled={isUpdating} className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md font-bold cursor-pointer transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto">
+            <Save className="w-5 h-5 mr-2" /> {isUpdating ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
 
@@ -535,7 +535,7 @@ export default function ManagePosts() {
                   </div>
                 )}
 
-                <div className="relative z-10 w-full px-10 md:px-12 pb-20">
+                <div className="relative z-10 w-full px-6 md:px-12 pb-20">
                   <div className="flex items-center gap-3">
                     <span className="text-secondary text-xs font-bold uppercase tracking-widest">
                       {editingPost.created_at ? new Date(editingPost.created_at).getFullYear() : '2026'}
