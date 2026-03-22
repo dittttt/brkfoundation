@@ -66,11 +66,8 @@ export default function AdminDashboard() {
           <p className="text-gray-500 font-medium text-lg">Here's what's happening with BRK Foundation today.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link to="/admin/news" className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-primary/20">
-            <Plus size={18} /> New Post
-          </Link>
-          <Link to="/admin/gallery" className="bg-white hover:bg-gray-50 text-dark border border-gray-200 px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all">
-            <ImageIcon size={18} /> Add Photos
+          <Link to="/admin/posts" className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-primary/20">
+            <Plus size={18} /> Manage Posts
           </Link>
         </div>
       </div>
@@ -122,7 +119,7 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 bg-white rounded-3xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100/50 p-7">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold flex items-center gap-2"><Activity size={20} className="text-primary" /> Recent Activity</h2>
-            <Link to="/admin/news" className="text-sm font-bold text-primary hover:text-primary/80 flex items-center">View all <ChevronRight size={16}/></Link>
+            <Link to="/admin/posts" className="text-sm font-bold text-primary hover:text-primary/80 flex items-center">View all <ChevronRight size={16}/></Link>
           </div>
           
           <div className="space-y-4">

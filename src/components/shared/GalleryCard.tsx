@@ -19,7 +19,7 @@ export const GalleryCard: React.FC<GalleryCardProps> = ({ item, delay = 0 }) => 
   return (
     <FadeIn delay={delay} className="group cursor-pointer">
       <Link to={item.slug ? `/gallery/${item.slug}` : "/demoboard"} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-        <div className="relative overflow-hidden aspect-[4/3]">
+        <div className="relative overflow-hidden aspect-[16/10]">
           <img 
             src={item.image} 
             alt={item.title} 
@@ -32,13 +32,13 @@ export const GalleryCard: React.FC<GalleryCardProps> = ({ item, delay = 0 }) => 
             </div>
           </div>
         </div>
-        <div className="p-3 md:p-4 flex flex-col flex-grow">
-          <h4 className="font-bold text-dark text-xs md:text-sm leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-            {item.title}
-          </h4>
-          <div className="mt-auto pt-2 border-t border-gray-100 text-[10px] md:text-xs text-gray-500 font-mono">
+        <div className="p-4 sm:p-6 md:p-8 flex flex-col flex-grow">
+          <div className="text-primary text-[10px] sm:text-sm font-bold mb-2 sm:mb-3 uppercase tracking-wide">
             {item.date}
           </div>
+          <h3 className="text-lg sm:text-xl md:text-2xl font-display font-black text-dark group-hover:text-primary transition-colors leading-tight line-clamp-3">
+            {item.title}
+          </h3>
         </div>
       </Link>
     </FadeIn>

@@ -72,6 +72,7 @@ export default function ManagePosts() {
 
   const [loading, setLoading] = useState(true);
   const [editingPost, setEditingPost] = useState<NewsPost | null>(null);
+  const [originalPost, setOriginalPost] = useState<NewsPost | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -180,6 +181,7 @@ export default function ManagePosts() {
       ]
     };
     setEditingPost(newPost);
+    setOriginalPost(JSON.parse(JSON.stringify(newPost)));
   };
 
   const toggleFeaturedNews = async (post: NewsPost, currentValue: boolean) => {
@@ -335,15 +337,17 @@ export default function ManagePosts() {
   if (loading) return <div className="p-8 text-center text-gray-500">Loading posts...</div>;
 
   if (editingPost) {
+    const hasChanges = JSON.stringify(editingPost) !== JSON.stringify(originalPost);
+
     return (
       <div className="max-w-[1600px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
         
-        {/* Editor Toolbar */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 sticky top-4 z-50">
-            <button onClick={() => setEditingPost(null)} className="inline-flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-wider cursor-pointer">
+        {/* Editor Toolbar - Note: Removed sticky class as requested */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 z-50">
+            <button onClick={() => { setEditingPost(null); setOriginalPost(null); }} className="inline-flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-wider cursor-pointer">
               <ChevronLeft size={16} /> Back to List
           </button>
-          <button onClick={handleSave} disabled={isUpdating} className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md font-bold cursor-pointer transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto">
+          <button onClick={handleSave} disabled={isUpdating || !hasChanges} className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md font-bold cursor-pointer transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto">
             <Save className="w-5 h-5 mr-2" /> {isUpdating ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
@@ -651,94 +655,68 @@ export default function ManagePosts() {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-gray-100 shadow-sm mb-8">
-        <div className="flex flex-col gap-4 w-full">
-          <div className="flex flex-col lg:flex-row gap-4 lg:items-center w-full">
-            <div className="flex items-center w-full lg:w-[300px] shrink-0 bg-slate-50 rounded-2xl overflow-hidden border border-transparent transition-all">
-              <div className="pl-4 pr-2 flex items-center justify-center text-gray-400">
-                <Search size={18} />
-              </div>
-              <input
-                type="text"
-                placeholder="Search posts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium text-gray-700 placeholder-gray-400"
-              />
-            </div>
-
-            <div className="flex flex-row justify-between items-center w-full gap-2">
-              <div className="flex bg-slate-50 p-1.5 rounded-2xl overflow-x-auto min-w-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {['ALL', 'News', 'Gallery'].map(t => (
-                  <button
-                    key={t}
-                    onClick={() => setFilterType(t)}
-                    className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 ${filterType === t ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-              
-              <div className="relative w-[130px] sm:w-[150px] shrink-0 z-40">
-                <DropdownFilter
-                  value={sortBy}
-                  onChange={setSortBy}
-                  options={[
-                    { value: 'latest', label: 'Latest' },
-                    { value: 'oldest', label: 'Oldest' },
-                    { value: 'updated', label: 'Last updated' },
-                    { value: 'views', label: 'Most Popular' }
-                  ]}
-                />
-              </div>
-            </div>
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-gray-100 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center w-full">
+        {/* Search */}
+        <div className="flex items-center w-full md:w-[300px] shrink-0 bg-slate-50 rounded-2xl overflow-hidden border border-transparent transition-all h-12">
+          <div className="pl-4 pr-2 flex items-center justify-center text-gray-400">
+            <Search size={18} />
           </div>
+          <input
+            type="text"
+            placeholder="Search posts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full py-3 pr-4 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium text-gray-700 placeholder-gray-400 h-full"
+          />
+        </div>
 
-          <div className="flex items-center gap-2 w-full overflow-hidden">
-            {showScrollArrows && (
+        {/* Type Filter */}
+        <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full md:w-auto h-12 shrink-0">
+          {['ALL', 'News', 'Gallery'].map(t => (
             <button
-              onClick={() => scroll('left')}
-              className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
+              key={t}
+              onClick={() => setFilterType(t)}
+              className={`flex-1 md:flex-none px-4 py-1.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${filterType === t ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
             >
-              <ChevronLeft size={18} />
+              {t}
             </button>
-            )}
+          ))}
+        </div>
 
-            <div
-              ref={scrollContainerRef}
-              className="flex-1 overflow-x-auto flex gap-2 py-2 scroll-smooth snap-x min-w-0"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              <style>{`
-                div::-webkit-scrollbar {
-                  display: none;
-                }
-              `}</style>
-              {years.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => setFilterYear(year)}
-                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap snap-start shrink-0 ${
-                    filterYear === year
-                      ? 'bg-blue-600 text-white shadow-md border border-blue-600'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  {year === 'All' ? 'All Years' : year}
-                </button>
-              ))}
-            </div>
-
-            {showScrollArrows && (
+        {/* Year Filter */}
+        <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full md:flex-1 overflow-x-auto h-12" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <style>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          {years.map((year) => (
             <button
-              onClick={() => scroll('right')}
-              className="shrink-0 flex-none p-1 bg-white border border-gray-200 rounded-full shadow-sm text-dark h-9 w-9 flex items-center justify-center my-auto transition-colors active:bg-gray-50 hover:bg-gray-50"
+              key={year}
+              onClick={() => setFilterYear(year)}
+              className={`px-4 py-1.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap shrink-0 ${
+                filterYear === year
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
             >
-              <ChevronRight size={18} />
+              {year === 'All' ? 'All Years' : year}
             </button>
-            )}
-          </div>
+          ))}
+        </div>
+
+        {/* Sort */}
+        <div className="w-full md:w-[150px] shrink-0 h-12 relative z-40">
+          <DropdownFilter
+            value={sortBy}
+            onChange={setSortBy}
+            options={[
+              { value: 'latest', label: 'Latest' },
+              { value: 'oldest', label: 'Oldest' },
+              { value: 'updated', label: 'Last updated' },
+              { value: 'views', label: 'Most Popular' }
+            ]}
+          />
         </div>
       </div>
 
@@ -807,7 +785,7 @@ export default function ManagePosts() {
                     
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <button onClick={() => setEditingPost(post)} className="flex items-center justify-center p-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
+                      <button onClick={() => { setEditingPost(post); setOriginalPost(JSON.parse(JSON.stringify(post))); }} className="flex items-center justify-center p-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
                       <Edit2 size={14} className="mr-1.5" /> Edit
                     </button>
                     <button onClick={() => handleDelete(post.id, post.tableType || 'news')} className="flex items-center justify-center p-2 text-sm font-bold text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition-colors">

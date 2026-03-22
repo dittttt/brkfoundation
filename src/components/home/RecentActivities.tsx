@@ -21,18 +21,27 @@ export const RecentActivities = () => {
   useEffect(() => {
     async function fetchActivities() {
       try {
-        const { data, error } = await supabase
-          .from('gallery')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(8);
+        const [newsRes, galleryRes] = await Promise.all([
+          supabase.from('news').select('title, created_at, image_url, slug').order('created_at', { ascending: false }).limit(8),
+          supabase.from('gallery').select('title, created_at, image_url, slug').order('created_at', { ascending: false }).limit(8)
+        ]);
 
-        if (data && data.length > 0) {
-          setActivities(data.map(g => ({
+        const combined = [
+          ...(newsRes.data || []).map(n => ({ ...n, type: 'news' })),
+          ...(galleryRes.data || []).map(n => ({ ...n, type: 'gallery' }))
+        ];
+
+        combined.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        
+        const latest = combined.slice(0, 8);
+
+        if (latest.length > 0) {
+          setActivities(latest.map(g => ({
             title: g.title,
-            date: new Date(g.created_at).toLocaleDateString(),
+            date: new Date(g.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
             image: g.image_url,
-            slug: g.slug
+            slug: g.slug,
+            type: g.type
           })));
         }
       } catch (err) {

@@ -58,7 +58,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -69,7 +69,7 @@ export default function AdminLayout() {
 
       {/* Sidebar (Drawer on mobile, Static on desktop) */}
       <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out md:sticky md:h-screen md:top-0 md:translate-x-0 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -83,7 +83,7 @@ export default function AdminLayout() {
           </button>
         </div>
         
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto w-full">
           <Link
             to="/admin"
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
@@ -116,9 +116,9 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Header (Hidden on large screens) */}
-        <header className="md:hidden bg-white border-b border-gray-200 px-6 py-4 flex items-center">
+        <header className="md:hidden bg-white border-b border-gray-200 px-6 py-4 flex items-center sticky top-0 z-30">
           <button 
             onClick={() => setIsSidebarOpen(true)}
             className="text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary rounded-md p-1 -ml-1"
@@ -129,7 +129,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 md:p-8 w-full overflow-x-hidden overflow-y-auto bg-gray-50 relative">
+        <main className="flex-1 p-4 md:p-8 w-full bg-gray-50">
           <Outlet />
         </main>
       </div>
