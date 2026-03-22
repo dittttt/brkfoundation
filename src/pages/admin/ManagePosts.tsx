@@ -389,7 +389,7 @@ export default function ManagePosts() {
 
             <div className="p-6 md:p-8 space-y-6">
               {/* Title & Metadata */}
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-[60]">
                 <input
                   type="text"
                   value={editingPost.title}
@@ -429,7 +429,7 @@ export default function ManagePosts() {
                 </div>
 
                 {/* Post Type */}
-                <div className="flex flex-col gap-1 mt-4">
+                <div className="flex flex-col gap-1 mt-4 relative z-50">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Post Type</label>
                   <DropdownFilter
                     value={editingPost.tableType || 'news'}
