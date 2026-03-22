@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { getRelativeTime } from '../../lib/utils';
-import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown, Search, ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Calendar, ArrowLeft, Image as ImageIcon, Save, X, Eye, Upload, Video, Type, Star, GripVertical, ChevronDown, Search, ChevronLeft, ChevronRight, Share2, History } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { DropdownFilter } from '../../components/ui';
@@ -26,6 +26,7 @@ interface NewsPost {
   is_featured_news?: boolean;
   images_data: NewsBlock[];
   tableType?: 'news' | 'gallery';
+  revisions?: any[];
 }
 
 const QUILL_MODULES = {
@@ -226,6 +227,17 @@ export default function ManagePosts() {
         images_data: editingPost.images_data || []
       };
 
+      if (editingPost.id && originalPost) {
+        const rev = {
+          edited_at: new Date().toISOString(),
+          title: originalPost.title,
+          content: originalPost.content,
+          image_url: originalPost.image_url,
+          editor: user?.email || 'Admin'
+        };
+        postData.revisions = [rev, ...(editingPost.revisions || [])];
+      }
+
       // Remove setting user_id/author_id to prevent "column not found" errors
       // if (user) {
       //   postData.user_id = user.id;
@@ -419,14 +431,16 @@ export default function ManagePosts() {
                 {/* Post Type */}
                 <div className="flex flex-col gap-1 mt-4">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Post Type</label>
-                  <select
+                  <DropdownFilter
                     value={editingPost.tableType || 'news'}
-                    onChange={(e) => setEditingPost({ ...editingPost, tableType: e.target.value as 'news' | 'gallery' })}
-                    className="w-full text-sm font-semibold text-gray-900 border-2 border-gray-200 focus:border-gray-300 focus:ring-0 focus:outline-none rounded-xl px-4 py-3 transition-all bg-white"
-                  >
-                    <option value="news">News Post</option>
-                    <option value="gallery">Gallery Item</option>
-                  </select>
+                    onChange={(val) => setEditingPost({ ...editingPost, tableType: val as 'news' | 'gallery' })}
+                    options={[
+                      { value: 'news', label: 'News Post' },
+                      { value: 'gallery', label: 'Gallery Item' }
+                    ]}
+                    className="w-full"
+                    buttonClassName="w-full text-sm font-semibold text-gray-900 border-2 border-gray-200 focus:border-gray-300 focus:ring-0 focus:outline-none rounded-xl px-4 py-3 transition-all bg-white"
+                  />
                 </div>
               </div>
 
@@ -744,59 +758,57 @@ export default function ManagePosts() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
           {filteredPosts.map((post) => (
-            <div key={post.id} className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
-              
+            <div key={post.id} className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 h-full flex flex-col group relative">
+
               {/* Image Block */}
-              <div className="w-full aspect-[4/3] rounded-lg shrink-0 bg-slate-100 overflow-hidden mb-3 sm:mb-5 relative">
+              <div className="relative overflow-hidden aspect-[16/10]">
                 {post.image_url ? (
                   <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center bg-slate-100">
                     <ImageIcon className="w-8 h-8 sm:w-10 sm:h-10 text-slate-300" />
                   </div>
                 )}
-                
+
                 {/* Badges */}
-                <div className="absolute top-2 left-2 right-2 sm:top-4 sm:left-4 sm:right-4 flex justify-between items-start pointer-events-none">
-                  <div className="bg-white/90 backdrop-blur-sm px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-dark shadow-sm">
+                <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 flex flex-col gap-2 pointer-events-none">
+                  <div className="bg-white/90 backdrop-blur-sm px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-wide shadow-sm text-dark self-start">
                     {post.tableType === 'news' ? 'News' : 'Gallery'}
                   </div>
                   {post.is_featured_news && post.tableType === 'news' && (
-                    <div className="bg-amber-400 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-1 sm:px-2 sm:py-1.5 rounded-md sm:rounded-lg shadow-sm flex items-center gap-1 uppercase tracking-wider backdrop-blur-sm">
-                      <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" />
-                      Featured
+                    <div className="bg-amber-400 text-white text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-lg shadow-sm flex items-center gap-1 uppercase tracking-wide backdrop-blur-sm self-start">
+                      <Star className="w-3 h-3 fill-current" /> Featured
                     </div>
                   )}
+                </div>
+
+                <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10">
+                  <div className="bg-black/60 text-white text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg shadow-sm flex items-center gap-1.5 backdrop-blur-sm pr-3">
+                    <Eye size={12} /> {post.views || 0}
+                  </div>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="flex flex-col flex-grow px-1 sm:px-2 min-w-0">
-                <div className="flex items-center gap-2 sm:gap-4 text-[9px] sm:text-[11px] font-bold text-gray-400 mb-2 sm:mb-3 uppercase tracking-wider truncate">
-                  <span className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                    <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    {new Date(post.created_at).toLocaleDateString()}
-                  </span>
-                  <span className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                    <Eye className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    {post.views || 0}
-                  </span>
+              <div className="p-4 sm:p-6 flex flex-col flex-grow bg-white relative z-0">
+                <div className="text-primary text-[10px] sm:text-sm font-bold mb-2 sm:mb-3 uppercase tracking-wide flex justify-between items-center group-hover:text-blue-600 transition-colors">
+                  <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</span>
+                  {post.revisions && post.revisions.length > 0 && (
+                    <span className="text-gray-400 font-medium lowercase flex items-center gap-1"><History size={12}/> {post.revisions.length} rev</span>
+                  )}
                 </div>
 
-                <h3 className="text-sm sm:text-[15px] md:text-base font-display font-black text-gray-900 mb-3 sm:mb-4 line-clamp-2 md:line-clamp-3 leading-tight group-hover:text-blue-600 transition-colors">
+                <h3 className="text-sm sm:text-base md:text-lg font-bold text-dark leading-tight line-clamp-2 mb-4 group-hover:text-primary transition-colors">
                   {post.title}
                 </h3>
 
-                <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-50 flex flex-col gap-2 sm:gap-3">
-                  
-                  <div className="grid grid-cols-2 gap-2">
-                      <button onClick={() => { setEditingPost(post); setOriginalPost(JSON.parse(JSON.stringify(post))); }} className="flex items-center justify-center p-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
-                      <Edit2 size={14} className="mr-1.5" /> Edit
-                    </button>
-                    <button onClick={() => handleDelete(post.id, post.tableType || 'news')} className="flex items-center justify-center p-2 text-sm font-bold text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition-colors">
-                      <Trash2 size={14} className="mr-1.5" /> Delete
-                    </button>
-                  </div>
+                <div className="mt-auto grid grid-cols-2 gap-2 pt-4 border-t border-gray-50">
+                    <button onClick={() => { setEditingPost(post); setOriginalPost(JSON.parse(JSON.stringify(post))); }} className="flex items-center justify-center p-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
+                    <Edit2 size={14} className="mr-1.5" /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(post.id, post.tableType || 'news')} className="flex items-center justify-center p-2 text-sm font-bold text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition-colors">
+                    <Trash2 size={14} className="mr-1.5" /> Delete
+                  </button>
                 </div>
               </div>
             </div>

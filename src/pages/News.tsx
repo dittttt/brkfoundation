@@ -19,7 +19,7 @@ const DUMMY_NEWS = [
 const DUMMY_GALLERY = [
   {
     title: "Feeding Program (BRGY. APAS GYM)",
-    date: "2025.10.12",
+    date: "10/12/2025",
     image: "https://picsum.photos/seed/community/400/300",
     slug: "feeding-program-apas",
     views: 0,
@@ -58,7 +58,7 @@ export default function News() {
             
             return {
               title: n.title,
-              date: new Date(n.created_at).toLocaleDateString(),
+              date: new Date(n.created_at).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }),
               image: n.image_url,
               desc: n.excerpt || fallbackDesc,
               slug: n.slug
@@ -71,7 +71,7 @@ export default function News() {
         if (galleryRes.data && galleryRes.data.length > 0) {
           setGallery(galleryRes.data.map(g => ({
             title: g.title,
-            date: new Date(g.created_at).toLocaleDateString(),
+            date: new Date(g.created_at).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }),
             image: g.image_url,
             slug: g.slug,
             views: g.views || 0,
