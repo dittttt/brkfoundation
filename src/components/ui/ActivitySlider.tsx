@@ -63,7 +63,7 @@ export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) =>
               className="flex-[0_0_70%] md:flex-[0_0_35%] lg:flex-[0_0_22%] min-w-0 pl-6"
             >
               {item.slug ? (
-                <Link to={`/${item.type === 'news' ? 'news' : 'gallery'}/${item.slug}`} className="block bg-white rounded-3xl overflow-hidden shadow-sm h-full group pb-2">
+                <Link to={`/${item.type === 'news' ? 'news' : 'gallery'}/${item.slug}`} className="block bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] h-full group pb-2 transition-all hover:-translate-y-1">
                   <div className="relative overflow-hidden aspect-square">        
                     <img
                       src={item.image}
@@ -80,7 +80,7 @@ export const ActivitySlider: React.FC<ActivitySliderProps> = ({ activities }) =>
                   </div>
                 </Link>
               ) : (
-                <div className="bg-white rounded-3xl overflow-hidden shadow-sm h-full group">
+                <div className="bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] h-full group">
                   <div className="relative overflow-hidden aspect-square">        
                     <img
                       src={item.image}

@@ -344,7 +344,7 @@ export default function ManagePosts() {
         
         {/* Editor Toolbar - Note: Removed sticky class as requested */}
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 z-50">
-            <button onClick={() => { setEditingPost(null); setOriginalPost(null); }} className="inline-flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-wider cursor-pointer">
+            <button onClick={() => { setEditingPost(null); setOriginalPost(null); }} className="inline-flex items-center gap-2 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider cursor-pointer transition-all">
               <ChevronLeft size={16} /> Back to List
           </button>
           <button onClick={handleSave} disabled={isUpdating || !hasChanges} className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 shadow-md font-bold cursor-pointer transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto">
@@ -403,10 +403,30 @@ export default function ManagePosts() {
                   </div>
                   <div className="flex-1 flex flex-col gap-1">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Modified / Updated On</label>
-                    <div className="w-full text-sm font-semibold text-gray-500 border-2 border-gray-200 rounded-xl px-4 py-3 transition-all bg-gray-50">
-                      {editingPost.id ? 'Auto-updated on save' : 'Not saved yet'}
+                    <div className="w-full text-sm font-semibold text-gray-500 border-2 border-gray-200 rounded-xl px-4 py-3 transition-all bg-gray-50 truncate text-center sm:text-left">
+                      {editingPost.id ? (
+                        <>
+                          <span className="hidden lg:inline">Auto-updated on save</span>
+                          <span className="lg:hidden">Auto</span>
+                        </>
+                      ) : (
+                        'Not saved'
+                      )}
                     </div>
                   </div>
+                </div>
+
+                {/* Post Type */}
+                <div className="flex flex-col gap-1 mt-4">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Post Type</label>
+                  <select
+                    value={editingPost.tableType || 'news'}
+                    onChange={(e) => setEditingPost({ ...editingPost, tableType: e.target.value as 'news' | 'gallery' })}
+                    className="w-full text-sm font-semibold text-gray-900 border-2 border-gray-200 focus:border-gray-300 focus:ring-0 focus:outline-none rounded-xl px-4 py-3 transition-all bg-white"
+                  >
+                    <option value="news">News Post</option>
+                    <option value="gallery">Gallery Item</option>
+                  </select>
                 </div>
               </div>
 
@@ -655,9 +675,9 @@ export default function ManagePosts() {
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-gray-100 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center w-full">
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-gray-100 shadow-sm mb-8 flex flex-col lg:flex-row flex-wrap gap-4 items-center w-full">
         {/* Search */}
-        <div className="flex items-center w-full md:w-[300px] shrink-0 bg-slate-50 rounded-2xl overflow-hidden border border-transparent transition-all h-12">
+        <div className="flex items-center w-full lg:w-[300px] shrink-0 bg-slate-50 rounded-2xl overflow-hidden border border-transparent transition-all h-12">
           <div className="pl-4 pr-2 flex items-center justify-center text-gray-400">
             <Search size={18} />
           </div>
@@ -671,12 +691,12 @@ export default function ManagePosts() {
         </div>
 
         {/* Type Filter */}
-        <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full md:w-auto h-12 shrink-0">
+        <div className="flex flex-wrap lg:flex-nowrap bg-slate-50 p-1.5 rounded-2xl w-full lg:w-auto h-auto min-h-[48px] shrink-0 gap-1">
           {['ALL', 'News', 'Gallery'].map(t => (
             <button
               key={t}
               onClick={() => setFilterType(t)}
-              className={`flex-1 md:flex-none px-4 py-1.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${filterType === t ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 md:flex-none px-3 md:px-4 py-1.5 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${filterType === t ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
             >
               {t}
             </button>
@@ -684,7 +704,7 @@ export default function ManagePosts() {
         </div>
 
         {/* Year Filter */}
-        <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full md:flex-1 overflow-x-auto h-12" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="flex bg-slate-50 p-1.5 rounded-2xl w-full lg:flex-1 overflow-x-auto h-12" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <style>{`
             div::-webkit-scrollbar {
               display: none;
@@ -705,16 +725,15 @@ export default function ManagePosts() {
           ))}
         </div>
 
-        {/* Sort */}
-        <div className="w-full md:w-[150px] shrink-0 h-12 relative z-40">
+        <div className="w-full lg:w-48 shrink-0 h-12 relative z-40">
           <DropdownFilter
             value={sortBy}
             onChange={setSortBy}
             options={[
               { value: 'latest', label: 'Latest' },
               { value: 'oldest', label: 'Oldest' },
-              { value: 'updated', label: 'Last updated' },
-              { value: 'views', label: 'Most Popular' }
+              { value: 'updated', label: 'Updated' },
+              { value: 'views', label: 'Popular' }
             ]}
           />
         </div>
@@ -725,10 +744,10 @@ export default function ManagePosts() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
           {filteredPosts.map((post) => (
-            <div key={post.id} className="bg-white rounded-2xl sm:rounded-[2rem] p-3 sm:p-4 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
+            <div key={post.id} className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
               
               {/* Image Block */}
-              <div className="w-full aspect-[4/3] rounded-xl sm:rounded-[1.5rem] relative shrink-0 bg-slate-100 overflow-hidden mb-3 sm:mb-5">
+              <div className="w-full aspect-[4/3] rounded-lg shrink-0 bg-slate-100 overflow-hidden mb-3 sm:mb-5 relative">
                 {post.image_url ? (
                   <img src={post.image_url} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 ) : (
@@ -764,26 +783,12 @@ export default function ManagePosts() {
                   </span>
                 </div>
 
-                <h3 className="text-sm sm:text-xl font-display font-black text-gray-900 mb-3 sm:mb-4 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+                <h3 className="text-sm sm:text-[15px] md:text-base font-display font-black text-gray-900 mb-3 sm:mb-4 line-clamp-2 md:line-clamp-3 leading-tight group-hover:text-blue-600 transition-colors">
                   {post.title}
                 </h3>
 
                 <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-50 flex flex-col gap-2 sm:gap-3">
-                  <div className="flex items-center justify-between gap-1 sm:gap-2">
-                    <div className="flex-1 min-w-0">
-                        <DropdownFilter
-                          value={post.tableType || 'news'}
-                          onChange={(val) => movePostType(post, val as 'news' | 'gallery')}
-                          options={[
-                            { value: 'news', label: 'Type: News Post' },
-                            { value: 'gallery', label: 'Type: Gallery Item' }
-                          ]}
-                          className="w-full"
-                          buttonClassName="py-2 px-3 text-xs bg-gray-50 border border-gray-100 font-bold"
-                        />
-                      </div>
-                    
-                  </div>
+                  
                   <div className="grid grid-cols-2 gap-2">
                       <button onClick={() => { setEditingPost(post); setOriginalPost(JSON.parse(JSON.stringify(post))); }} className="flex items-center justify-center p-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors">
                       <Edit2 size={14} className="mr-1.5" /> Edit

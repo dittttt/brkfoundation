@@ -10,7 +10,29 @@ const DUMMY_ACTIVITIES = [
     title: "Brgy. Zapatera, Green Mosque",
     date: "10th April, 2023",
     image: "https://brkfoundation.org/data/editor/2510/thumb-5f7cb3a2b19511c194455100e31d012b_1761788708_4552_350x350.jpg",
-    slug: "zapatera-green-mosque"
+    slug: "zapatera-green-mosque",
+    type: "gallery"
+  },
+  {
+    title: "Donated Clothes & Shoes",
+    date: "15th May, 2023",
+    image: "https://brkfoundation.org/data/file/notice/thumb-28369db3d30448c714369d5988f647e5_2NjdMvPp_fb3f83f6e288ec340c7bc7bd29e0328f20a5cea0_500x300.jpg",
+    slug: "donated-clothes",
+    type: "news"
+  },
+  {
+    title: "Feeding Program (BRGY. APAS GYM)",
+    date: "12th Oct, 2023",
+    image: "https://brkfoundation.org/data/editor/2510/thumb-5f7cb3a2b19511c194455100e31d012b_1761788708_4552_350x350.jpg",
+    slug: "feeding-program-apas",
+    type: "gallery"
+  },
+  {
+    title: "Medical Mission",
+    date: "20th Nov, 2023",
+    image: "https://brkfoundation.org/data/file/notice/thumb-28369db3d30448c714369d5988f647e5_2NjdMvPp_fb3f83f6e288ec340c7bc7bd29e0328f20a5cea0_500x300.jpg",
+    slug: "medical-mission",
+    type: "news"
   }
 ];
 

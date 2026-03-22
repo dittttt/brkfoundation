@@ -242,6 +242,7 @@ export default function PostDetail({ type }: PostDetailProps) {
           </div>
         </div>
       </div>
+      </div>
     </MainLayout>
   );
 };
