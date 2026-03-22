@@ -791,7 +791,7 @@ export default function ManagePosts() {
 
               {/* Content */}
               <div className="p-4 sm:p-6 flex flex-col flex-grow bg-white relative z-0">
-                <div className="text-primary text-[10px] sm:text-sm font-bold mb-2 sm:mb-3 uppercase tracking-wide flex justify-between items-center group-hover:text-blue-600 transition-colors">
+                <div className="text-primary text-[10px] sm:text-sm font-bold mb-2 sm:mb-3 uppercase tracking-wide flex justify-between items-center transition-colors">
                   <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}</span>
                   {post.revisions && post.revisions.length > 0 && (
                     <span className="text-gray-400 font-medium lowercase flex items-center gap-1"><History size={12}/> {post.revisions.length} rev</span>
